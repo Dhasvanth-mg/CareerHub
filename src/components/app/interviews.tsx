@@ -80,6 +80,7 @@ function RoundFields({ round, idPrefix }: { round?: InterviewRound; idPrefix: st
 }
 
 export function AddInterviewForm({ applicationId }: { applicationId: string }) {
+  const [resetKey, setResetKey] = useState(0);
   const form = useSafeForm(createRound.bind(null, applicationId));
   const { state, onSubmit, pending } = form;
   const formRef = useRef<HTMLFormElement>(null);
@@ -87,12 +88,13 @@ export function AddInterviewForm({ applicationId }: { applicationId: string }) {
     if (!state?.error) {
       toast.success("Interview added");
       formRef.current?.reset();
+      setResetKey((k) => k + 1); // remounts the fields, including the controlled date and time
     }
   });
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
-      <RoundFields idPrefix="new-round" />
+      <RoundFields key={resetKey} idPrefix="new-round" />
       <input type="hidden" name="status" value="scheduled" />
       <div className="flex items-center gap-3 sm:col-span-2">
         <SubmitButton pending={pending} pendingText="Adding…">

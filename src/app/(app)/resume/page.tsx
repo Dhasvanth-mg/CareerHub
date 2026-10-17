@@ -39,10 +39,12 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
       .eq("extraction_state", "ok")
       .order("created_at", { ascending: false })
       .limit(100),
+    // Only postings that belong to an application, so abandoned imports never clutter the picker.
     supabase
-      .from("job_postings")
-      .select("id, title, company_name")
-      .order("created_at", { ascending: false })
+      .from("applications")
+      .select("job_posting_id, title, company_name")
+      .not("job_posting_id", "is", null)
+      .order("updated_at", { ascending: false })
       .limit(100),
     supabase
       .from("analysis_runs")
@@ -59,10 +61,13 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
     id: v.id,
     label: `${v.documents?.title ?? v.file_name}, version ${v.version}`,
   }));
-  const jobs = (jobsRes.data ?? []).map((j) => ({
-    id: j.id,
-    label: [j.title, j.company_name].filter(Boolean).join(" at ") || "Untitled posting",
-  }));
+  const seen = new Set<string>();
+  const jobs = (jobsRes.data ?? []).flatMap((a) => {
+    const id = a.job_posting_id as string;
+    if (seen.has(id)) return [];
+    seen.add(id);
+    return [{ id, label: [a.title, a.company_name].filter(Boolean).join(" at ") || "Untitled posting" }];
+  });
   const runs = (runsRes.data ?? []) as unknown as RunRow[];
   const app = appRes.data as { id: string; job_posting_id: string | null } | null;
 

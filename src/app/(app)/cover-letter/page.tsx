@@ -42,7 +42,13 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
   const [letters, resumes, jobsRes, runsRes, appRes] = await Promise.all([
     versionsOfKind(supabase, "cover_letter"),
     versionsOfKind(supabase, "resume"),
-    supabase.from("job_postings").select("id, title, company_name").order("created_at", { ascending: false }).limit(100),
+    // Only postings that belong to an application, so abandoned imports never clutter the picker.
+    supabase
+      .from("applications")
+      .select("job_posting_id, title, company_name")
+      .not("job_posting_id", "is", null)
+      .order("updated_at", { ascending: false })
+      .limit(100),
     supabase
       .from("analysis_runs")
       .select("id, created_at, status, score, job_postings(title, company_name), document_versions(version, documents(title))")
@@ -54,10 +60,13 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
       : Promise.resolve({ data: null }),
   ]);
 
-  const jobs = (jobsRes.data ?? []).map((j) => ({
-    id: j.id,
-    label: [j.title, j.company_name].filter(Boolean).join(" at ") || "Untitled posting",
-  }));
+  const seen = new Set<string>();
+  const jobs = (jobsRes.data ?? []).flatMap((a) => {
+    const id = a.job_posting_id as string;
+    if (seen.has(id)) return [];
+    seen.add(id);
+    return [{ id, label: [a.title, a.company_name].filter(Boolean).join(" at ") || "Untitled posting" }];
+  });
   const runs = (runsRes.data ?? []) as unknown as RunRow[];
   const app = appRes.data as { id: string; job_posting_id: string | null } | null;
 
@@ -119,7 +128,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
                   first. The draft is built only from what it says.
                 </p>
               ) : (
-                <CoverLetterDraftForm resumes={resumes} jobs={jobs} />
+                <CoverLetterDraftForm resumes={resumes} jobs={jobs} defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined} />
               )}
             </section>
           </div>

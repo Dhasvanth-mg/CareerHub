@@ -15,6 +15,16 @@ import { pageToText } from "@/lib/ai/html-text";
 import type { ExtractState, SaveState } from "./types";
 
 const MAX_SNAPSHOT = 60_000;
+
+/** Removes this user's imports that were never saved as an application and are over a day old. Best effort. */
+async function pruneAbandonedImports(supabase: Awaited<ReturnType<typeof createClient>>) {
+  const { data: linked } = await supabase.from("applications").select("job_posting_id").not("job_posting_id", "is", null);
+  const keep = (linked ?? []).map((a) => a.job_posting_id as string);
+  const cutoff = new Date(Date.now() - 86_400_000).toISOString();
+  let q = supabase.from("job_postings").delete().lt("created_at", cutoff);
+  if (keep.length) q = q.not("id", "in", `(${keep.join(",")})`);
+  await q;
+}
 const MIN_TEXT = 80;
 
 export async function extractJob(_prev: ExtractState, formData: FormData): Promise<ExtractState> {
@@ -22,6 +32,8 @@ export async function extractJob(_prev: ExtractState, formData: FormData): Promi
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) return { error: "Please log in again." };
+
+  await pruneAbandonedImports(supabase);
 
   let text = "";
   let sourceUrl: string | null = null;

@@ -95,7 +95,7 @@ export function CoverLetterAnalysisForm({
   );
 }
 
-export function CoverLetterDraftForm({ resumes, jobs }: { resumes: Option[]; jobs: Option[] }) {
+export function CoverLetterDraftForm({ resumes, jobs, defaultJob }: { resumes: Option[]; jobs: Option[]; defaultJob?: string }) {
   const { state, onSubmit, pending } = useSafeForm(generateCoverLetterDraft);
   const [edited, setEdited] = useState<{ source: string | undefined; text: string }>({ source: undefined, text: "" });
   const [title, setTitle] = useState("");
@@ -134,7 +134,7 @@ export function CoverLetterDraftForm({ resumes, jobs }: { resumes: Option[]; job
             </NativeSelect>
           </Field>
           <Field label="Job" htmlFor="dr-job">
-            <NativeSelect id="dr-job" name="job_posting_id" defaultValue={jobs[0]?.id} required>
+            <NativeSelect id="dr-job" name="job_posting_id" defaultValue={defaultJob ?? jobs[0]?.id} required>
               {jobs.map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.label}

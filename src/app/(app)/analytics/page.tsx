@@ -65,7 +65,12 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
     },
     {
       label: "Typical wait",
-      value: result.medianDaysToResponse === null ? "n/a" : `${Math.round(result.medianDaysToResponse)} days`,
+      value:
+        result.medianDaysToResponse === null
+          ? "n/a"
+          : result.medianDaysToResponse < 1
+            ? "Under a day"
+            : `${Math.round(result.medianDaysToResponse)} days`,
       hint: result.responseSample ? `Median of ${result.responseSample}` : "Needs recorded stage changes",
     },
     { label: "Still waiting", value: String(result.waiting), hint: "Applied, no movement yet" },
