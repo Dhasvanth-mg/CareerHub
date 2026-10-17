@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { LocalTime } from "@/components/app/local-time";
 import { ResumeAnalysisForm } from "@/components/app/resume-analysis-form";
+import { AiGate } from "@/components/app/ai-gate";
 import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Resume Studio | CareerHub AI" };
@@ -96,13 +97,15 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
           <h2 id="run" className="font-medium">
             New analysis
           </h2>
-          <ResumeAnalysisForm
-            versions={versions}
-            jobs={jobs}
-            defaultVersion={one(sp.version)}
-            defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined}
-            applicationId={app?.id}
-          />
+          <AiGate feature="Resume Studio">
+            <ResumeAnalysisForm
+              versions={versions}
+              jobs={jobs}
+              defaultVersion={one(sp.version)}
+              defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined}
+              applicationId={app?.id}
+            />
+          </AiGate>
         </section>
       )}
 

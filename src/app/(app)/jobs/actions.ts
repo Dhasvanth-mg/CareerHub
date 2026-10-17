@@ -8,7 +8,7 @@ import { logEvent } from "@/lib/events";
 import { firstError, formToObject, optDate, optText } from "@/lib/forms";
 import { WORK_MODES } from "@/lib/domain";
 import { AiUnavailableError } from "@/lib/ai/groq";
-import { consumeAiQuota } from "@/lib/ai/quota";
+import { checkAiAllowed } from "@/lib/ai/guard";
 import { extractJobFields, emptyExtraction, PROMPT_VERSION, type JobExtraction } from "@/lib/ai/job-extraction";
 import { FetchBlockedError, safeFetchText } from "@/lib/ai/safe-fetch";
 import { pageToText } from "@/lib/ai/html-text";
@@ -55,8 +55,9 @@ export async function extractJob(_prev: ExtractState, formData: FormData): Promi
   let aiError: string | undefined;
   let truncated = false;
   let model: string | undefined;
-  if (!(await consumeAiQuota(supabase, "job_extraction"))) {
-    aiError = "You've reached the hourly AI limit. You can fill in the details yourself, or try again later.";
+  const allowed = await checkAiAllowed(supabase, "job_extraction");
+  if (!allowed.ok) {
+    aiError = allowed.message;
   } else {
     try {
       const result = await extractJobFields(text);

@@ -7,6 +7,7 @@ import { NativeSelect } from "@/components/ui/native-select";
 import { ApplicationForm } from "@/components/app/application-form";
 import { ConfirmForm } from "@/components/app/confirm-form";
 import { LinkContactForm } from "@/components/app/link-contact-form";
+import { NextActionPanel } from "@/components/app/next-action-panel";
 import { LocalTime } from "@/components/app/local-time";
 import { DeadlineBadge } from "@/components/app/stage-badge";
 import { StageSelect } from "@/components/app/stage-select";
@@ -148,6 +149,8 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
           </div>
         </div>
       </div>
+
+      <NextActionPanel applicationId={id} />
 
       <section aria-labelledby="details" className="space-y-4">
         <h2 id="details" className="text-lg font-medium">

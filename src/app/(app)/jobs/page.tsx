@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { AiGate } from "@/components/app/ai-gate";
 import { JobCapture } from "@/components/app/job-capture";
 
 export const metadata = { title: "Job Capture | CareerHub AI" };
@@ -12,7 +14,16 @@ export default function JobsPage() {
           is saved to your tracker until you confirm.
         </p>
       </div>
-      <JobCapture />
+      <AiGate feature="Job Capture">
+        <JobCapture />
+      </AiGate>
+      <p className="text-sm text-muted-foreground">
+        Prefer not to use AI?{" "}
+        <Link href="/applications/new" className="underline underline-offset-4">
+          Add an application by hand
+        </Link>
+        .
+      </p>
     </div>
   );
 }

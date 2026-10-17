@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/events";
 import { firstError, formToObject, type ActionState } from "@/lib/forms";
 import { AiUnavailableError } from "@/lib/ai/groq";
-import { consumeAiQuota } from "@/lib/ai/quota";
+import { checkAiAllowed } from "@/lib/ai/guard";
 import {
   RESUME_PROMPT_VERSION,
   RESUME_RUBRIC_VERSION,
@@ -64,9 +64,8 @@ export async function runResumeAnalysis(_prev: ActionState, formData: FormData):
     if (!app) return { error: "That application wasn't found." };
   }
 
-  if (!(await consumeAiQuota(supabase, "resume_analysis"))) {
-    return { error: "You've reached the hourly AI limit. Please try again later." };
-  }
+  const allowed = await checkAiAllowed(supabase, "resume_analysis");
+  if (!allowed.ok) return { error: allowed.message };
 
   const base = {
     kind: "resume" as const,
