@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { AuthState } from "@/app/auth/actions";
+import { EMAIL_FLOWS_ENABLED } from "@/lib/flags";
 import { useSafeForm } from "@/lib/use-safe-form";
 
 type Props = {
@@ -48,7 +49,7 @@ export function AuthForm({ mode, action, googleAction, next, initialError, notic
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
-            {isLogin ? (
+            {isLogin && EMAIL_FLOWS_ENABLED ? (
               <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-4">
                 Forgot password?
               </Link>

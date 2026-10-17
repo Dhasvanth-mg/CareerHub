@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AuthForm } from "@/components/app/auth-form";
 import { login } from "@/app/auth/actions";
+import { EMAIL_FLOWS_ENABLED } from "@/lib/flags";
 
 export const metadata = { title: "Log in | CareerHub AI" };
 
@@ -19,7 +20,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   return (
     <div className="space-y-4">
       <AuthForm mode="login" action={login} next={next} initialError={initialError} notice={notice} />
-      {error === "link" ? (
+      {error === "link" && EMAIL_FLOWS_ENABLED ? (
         <p className="text-center text-sm">
           <Link href="/forgot-password" className="font-medium underline underline-offset-4">
             Reset your password
