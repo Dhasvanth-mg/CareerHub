@@ -1,21 +1,34 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { safeNext } from "@/lib/safe-redirect";
 
 export type AuthState = { error?: string; message?: string } | undefined;
+
+const PENDING_EMAIL_COOKIE = "ch_pending_email";
 
 const credentials = z.object({
   email: z.string().trim().email("Enter a valid email address."),
   password: z.string().min(8, "Password must be at least 8 characters.").max(128),
 });
+const emailOnly = z.object({ email: z.string().trim().email("Enter a valid email address.") });
 
-/** Only allow same-site relative redirects. */
-function safeNext(value: FormDataEntryValue | null): string {
-  const next = typeof value === "string" ? value : "";
-  return next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+async function siteOrigin(): Promise<string> {
+  return (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
+}
+
+/** Remembers which address is waiting for confirmation without putting it in a URL. */
+async function rememberPendingEmail(email: string) {
+  (await cookies()).set(PENDING_EMAIL_COOKIE, email, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60,
+  });
 }
 
 export async function login(_prev: AuthState, formData: FormData): Promise<AuthState> {
@@ -27,7 +40,13 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
-  if (error) return { error: "Incorrect email or password." };
+  if (error) {
+    if (error.code === "email_not_confirmed") {
+      await rememberPendingEmail(parsed.data.email);
+      redirect("/check-email?reason=unconfirmed");
+    }
+    return { error: "Incorrect email or password." };
+  }
   redirect(safeNext(formData.get("next")));
 }
 
@@ -38,7 +57,7 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const origin = await siteOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     ...parsed.data,
@@ -46,13 +65,78 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
   });
   if (error) return { error: error.message };
   if (!data.session) {
-    return { message: "Check your email to confirm your account, then log in." };
+    // Confirmation is on: the user must click the emailed link before they can log in.
+    await rememberPendingEmail(parsed.data.email);
+    redirect("/check-email");
   }
   redirect("/dashboard");
 }
 
+/**
+ * Always answers the same way, so the form can't be used to find out which addresses have accounts.
+ */
+export async function requestPasswordReset(_prev: AuthState, formData: FormData): Promise<AuthState> {
+  const parsed = emailOnly.safeParse({ email: formData.get("email") });
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const origin = await siteOrigin();
+  const supabase = await createClient();
+  await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: `${origin}/auth/callback?next=/reset-password`,
+  });
+  return { message: "If an account exists for that address, we've emailed a link to reset the password. It expires in an hour." };
+}
+
+const passwordSchema = z
+  .object({
+    password: z.string().min(8, "Password must be at least 8 characters.").max(128),
+    confirm: z.string(),
+  })
+  .refine((v) => v.password === v.confirm, { message: "The two passwords don't match.", path: ["confirm"] });
+
+/** Runs for a user who arrived through a reset link (they hold a short-lived session). */
+export async function updatePassword(_prev: AuthState, formData: FormData): Promise<AuthState> {
+  const parsed = passwordSchema.safeParse({ password: formData.get("password"), confirm: formData.get("confirm") });
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) return { error: "This reset link has expired. Request a new one." };
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) {
+    return {
+      error:
+        error.code === "same_password"
+          ? "Choose a password you haven't used before."
+          : error.code === "weak_password"
+            ? "That password is too easy to guess. Try a longer one."
+            : "Couldn't update the password. Request a new link and try again.",
+    };
+  }
+  redirect("/dashboard");
+}
+
+export async function resendConfirmation(): Promise<AuthState> {
+  const email = (await cookies()).get(PENDING_EMAIL_COOKIE)?.value;
+  if (!email) return { error: "We don't have an address to resend to. Sign up again, or log in." };
+
+  const origin = await siteOrigin();
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email,
+    options: { emailRedirectTo: `${origin}/auth/callback` },
+  });
+  if (error?.code === "over_email_send_rate_limit" || error?.status === 429) {
+    return { error: "Please wait a minute before asking for another email." };
+  }
+  if (error) return { error: "Couldn't send the email. Please try again shortly." };
+  return { message: "Sent. It can take a minute to arrive. Check your spam folder too." };
+}
+
 export async function signInWithGoogle() {
-  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const origin = await siteOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",

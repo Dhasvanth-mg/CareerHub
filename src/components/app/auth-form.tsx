@@ -13,9 +13,11 @@ type Props = {
   googleAction?: () => Promise<void>;
   next?: string;
   initialError?: string;
+  /** Neutral, non-error message shown above the form (for example after deleting an account). */
+  notice?: string;
 };
 
-export function AuthForm({ mode, action, googleAction, next, initialError }: Props) {
+export function AuthForm({ mode, action, googleAction, next, initialError, notice }: Props) {
   const { state, onSubmit, pending } = useSafeForm(action);
   const isLogin = mode === "login";
   const error = state?.error ?? initialError;
@@ -31,6 +33,12 @@ export function AuthForm({ mode, action, googleAction, next, initialError }: Pro
         </p>
       </div>
 
+      {notice ? (
+        <p role="status" className="rounded-md border p-3 text-sm text-muted-foreground">
+          {notice}
+        </p>
+      ) : null}
+
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         {next ? <input type="hidden" name="next" value={next} /> : null}
         <div className="space-y-2">
@@ -38,7 +46,14 @@ export function AuthForm({ mode, action, googleAction, next, initialError }: Pro
           <Input id="email" name="email" type="email" autoComplete="email" required />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password">Password</Label>
+            {isLogin ? (
+              <Link href="/forgot-password" className="text-xs text-muted-foreground underline underline-offset-4">
+                Forgot password?
+              </Link>
+            ) : null}
+          </div>
           <Input
             id="password"
             name="password"
