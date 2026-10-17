@@ -19,6 +19,7 @@ import {
   nowMs,
   type ApplicationRow,
 } from "@/lib/domain";
+import { setSubmittedVersion } from "../../documents/actions";
 import { deleteApplication, setArchived, updateApplication } from "../actions";
 import { setReferralStatus, unlinkContact } from "../../contacts/actions";
 
@@ -67,6 +68,27 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
     supabase.from("referrals").select("contact_id, status").eq("application_id", id),
     supabase.from("contacts").select("id, name, company").order("name").limit(500),
   ]);
+
+  const { data: docVersions } = await supabase
+    .from("document_versions")
+    .select("id, version, documents!inner(title, kind)")
+    .in("documents.kind", ["resume", "cover_letter"])
+    .order("created_at", { ascending: false })
+    .limit(200);
+  const versionOptions = ((docVersions ?? []) as unknown as {
+    id: string;
+    version: number;
+    documents: { title: string; kind: string };
+  }[]).map((v) => ({ id: v.id, kind: v.documents.kind, label: `${v.documents.title}, version ${v.version}` }));
+  const materials = [
+    { field: "resume" as const, label: "Submitted resume", current: (app as { submitted_resume_version_id: string | null }).submitted_resume_version_id },
+    {
+      field: "cover_letter" as const,
+      label: "Submitted cover letter",
+      current: (app as { submitted_cover_letter_version_id: string | null }).submitted_cover_letter_version_id,
+    },
+  ];
+  const jobPostingId = (app as { job_posting_id: string | null }).job_posting_id;
 
   const events = eventsRes.data ?? [];
   const tasks = (tasksRes.data ?? []) as TaskItem[];
@@ -132,6 +154,57 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
           Details
         </h2>
         <ApplicationForm action={updateApplication.bind(null, id)} defaults={row} submitLabel="Save changes" toastOnSuccess />
+      </section>
+
+      <section aria-labelledby="materials" className="space-y-4">
+        <h2 id="materials" className="text-lg font-medium">
+          Materials
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Record which exact version you sent, so you can always find it later.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {materials.map((m) => (
+            <form key={m.field} action={setSubmittedVersion.bind(null, id, m.field)} className="space-y-1.5">
+              <label htmlFor={`sub-${m.field}`} className="text-sm font-medium">
+                {m.label}
+              </label>
+              <div className="flex gap-2">
+                <NativeSelect id={`sub-${m.field}`} name="version_id" defaultValue={m.current ?? ""}>
+                  <option value="">Not recorded</option>
+                  {versionOptions
+                    .filter((o) => o.kind === m.field)
+                    .map((o) => (
+                      <option key={o.id} value={o.id}>
+                        {o.label}
+                      </option>
+                    ))}
+                </NativeSelect>
+                <Button type="submit" variant="secondary" size="sm">
+                  Save
+                </Button>
+              </div>
+            </form>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-3 text-sm">
+          {jobPostingId ? (
+            <Link href={`/resume?application=${id}`} className="underline underline-offset-4">
+              Analyze a resume against this job
+            </Link>
+          ) : (
+            <span className="text-muted-foreground">
+              Import this role with{" "}
+              <Link href="/jobs" className="underline underline-offset-4">
+                Job Capture
+              </Link>{" "}
+              to analyze a resume against its requirements.
+            </span>
+          )}
+          <Link href="/documents" className="underline underline-offset-4">
+            Document Vault
+          </Link>
+        </div>
       </section>
 
       <section aria-labelledby="tasks" className="space-y-4">
