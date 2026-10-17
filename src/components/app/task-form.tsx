@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { createTask } from "@/app/(app)/tasks/actions";
 import { Field } from "@/components/app/field";
 import { SubmitButton } from "@/components/app/submit-button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 type Props = {
   /** Fixed application (detail page). */
@@ -22,22 +22,18 @@ function toIsoFromLocal(local: string): string {
 }
 
 export function TaskForm({ applicationId, applications }: Props) {
-  const { state, onSubmit, pending } = useSafeForm(createTask);
+  const form = useSafeForm(createTask);
+  const { state, onSubmit, pending } = form;
   const [due, setDue] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
-  const handled = useRef(state);
 
-  // useActionState keeps the last result; react to each new one exactly once.
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  useOnComplete(form, () => {
     if (!state?.error) {
       formRef.current?.reset();
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDue("");
       toast.success("Task added");
     }
-  }, [state]);
+  });
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">

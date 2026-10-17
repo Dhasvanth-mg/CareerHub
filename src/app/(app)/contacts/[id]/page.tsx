@@ -15,6 +15,14 @@ type Linked = {
   applications: { id: string; title: string; company_name: string } | null;
 };
 
+export async function generateMetadata({ params }: PageProps<"/contacts/[id]">) {
+  const { id } = await params;
+  if (!UUID.test(id)) return { title: "Contact | CareerHub AI" };
+  const supabase = await createClient();
+  const { data } = await supabase.from("contacts").select("name").eq("id", id).maybeSingle();
+  return { title: data ? `${data.name} | CareerHub AI` : "Contact | CareerHub AI" };
+}
+
 export default async function ContactDetailPage({ params }: PageProps<"/contacts/[id]">) {
   const { id } = await params;
   if (!UUID.test(id)) notFound();

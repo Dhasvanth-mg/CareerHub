@@ -168,7 +168,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
         <h2 id="details" className="text-lg font-medium">
           Details
         </h2>
-        <ApplicationForm action={updateApplication.bind(null, id)} defaults={row} submitLabel="Save changes" toastOnSuccess />
+        <ApplicationForm action={updateApplication.bind(null, id)} defaults={row} submitLabel="Save changes" toastOnSuccess showStage={false} />
       </section>
 
       <section aria-labelledby="materials" className="space-y-4">
@@ -185,7 +185,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
                 {m.label}
               </label>
               <div className="flex gap-2">
-                <NativeSelect id={`sub-${m.field}`} name="version_id" defaultValue={m.current ?? ""}>
+                <NativeSelect key={`${m.field}-${m.current ?? "none"}`} id={`sub-${m.field}`} name="version_id" defaultValue={m.current ?? ""}>
                   <option value="">Not recorded</option>
                   {versionOptions
                     .filter((o) => o.kind === m.field)
@@ -279,7 +279,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
                       <label htmlFor={`ref-${c.id}`} className="sr-only">
                         Referral status for {c.name}
                       </label>
-                      <NativeSelect id={`ref-${c.id}`} name="status" defaultValue={status} className="w-36">
+                      <NativeSelect key={`${c.id}-${status}`} id={`ref-${c.id}`} name="status" defaultValue={status} className="w-36">
                         {REFERRAL_STATUSES.map((s) => (
                           <option key={s} value={s}>
                             {REFERRAL_LABEL[s]}

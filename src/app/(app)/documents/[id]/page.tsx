@@ -22,6 +22,14 @@ const KIND_LABEL: Record<string, string> = {
 
 const size = (bytes: number) => (bytes >= 1_048_576 ? `${(bytes / 1_048_576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`);
 
+export async function generateMetadata({ params }: PageProps<"/documents/[id]">) {
+  const { id } = await params;
+  if (!UUID.test(id)) return { title: "Document | CareerHub AI" };
+  const supabase = await createClient();
+  const { data } = await supabase.from("documents").select("title").eq("id", id).maybeSingle();
+  return { title: data ? `${data.title} | CareerHub AI` : "Document | CareerHub AI" };
+}
+
 export default async function DocumentPage({ params, searchParams }: PageProps<"/documents/[id]">) {
   const { id } = await params;
   if (!UUID.test(id)) notFound();

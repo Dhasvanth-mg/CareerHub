@@ -48,7 +48,7 @@ export function Board({ apps }: { apps: BoardCard[] }) {
           <section
             key={stage}
             role="listitem"
-            aria-label={`${STAGE_LABEL[stage]}, ${inStage.length} applications`}
+            aria-label={`${STAGE_LABEL[stage]}, ${inStage.length} ${inStage.length === 1 ? "application" : "applications"}`}
             onDragOver={(e) => {
               e.preventDefault();
               setOverStage(stage);

@@ -1,21 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { updateExtractedText } from "@/app/(app)/documents/actions";
 import { SubmitButton } from "@/components/app/submit-button";
 import { Textarea } from "@/components/ui/textarea";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 export function ExtractedTextEditor({ versionId, initial }: { versionId: string; initial: string }) {
-  const { state, onSubmit, pending } = useSafeForm(updateExtractedText.bind(null, versionId));
-  const handled = useRef(state);
-
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  const form = useSafeForm(updateExtractedText.bind(null, versionId));
+  const { state, onSubmit, pending } = form;
+  useOnComplete(form, () => {
     if (!state?.error) toast.success("Corrected text saved");
-  }, [state]);
+  });
 
   return (
     <form onSubmit={onSubmit} className="space-y-3">

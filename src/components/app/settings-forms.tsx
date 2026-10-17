@@ -1,21 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { deleteAccount, updateProfile } from "@/app/(app)/settings/actions";
 import { Field } from "@/components/app/field";
 import { SubmitButton } from "@/components/app/submit-button";
 import { Input } from "@/components/ui/input";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 export function ProfileForm({ displayName }: { displayName: string }) {
-  const { state, onSubmit, pending } = useSafeForm(updateProfile);
-  const handled = useRef(state);
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  const form = useSafeForm(updateProfile);
+  const { state, onSubmit, pending } = form;
+  useOnComplete(form, () => {
     if (!state?.error) toast.success("Profile saved");
-  }, [state]);
+  });
 
   return (
     <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-3">
@@ -35,7 +32,8 @@ export function ProfileForm({ displayName }: { displayName: string }) {
 }
 
 export function DeleteAccountForm() {
-  const { state, onSubmit, pending } = useSafeForm(deleteAccount);
+  const form = useSafeForm(deleteAccount);
+  const { state, onSubmit, pending } = form;
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <Field label="Type DELETE to confirm" htmlFor="confirm" className="w-64">

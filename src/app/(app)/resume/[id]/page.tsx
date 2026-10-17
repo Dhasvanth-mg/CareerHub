@@ -27,6 +27,8 @@ const ASSESSMENT = {
   not_evidenced: { label: "Not evidenced", className: "bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200" },
 } as const;
 
+export const metadata = { title: "Resume analysis | CareerHub AI" };
+
 export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">) {
   const { id } = await params;
   if (!UUID.test(id)) notFound();

@@ -21,6 +21,8 @@ const ISSUE_LABEL: Record<string, string> = {
   structure: "Structure",
 };
 
+export const metadata = { title: "Cover letter review | CareerHub AI" };
+
 export default async function CoverLetterResultPage({ params }: PageProps<"/cover-letter/[id]">) {
   const { id } = await params;
   if (!UUID.test(id)) notFound();

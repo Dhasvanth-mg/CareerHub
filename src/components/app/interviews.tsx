@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { createRound, deleteRound, updateRound } from "@/app/(app)/applications/interview-actions";
@@ -19,7 +19,7 @@ import {
   ROUND_TYPE_LABEL,
   type InterviewRound,
 } from "@/lib/domain";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 const subscribe = () => () => {};
 
@@ -80,18 +80,15 @@ function RoundFields({ round, idPrefix }: { round?: InterviewRound; idPrefix: st
 }
 
 export function AddInterviewForm({ applicationId }: { applicationId: string }) {
-  const { state, onSubmit, pending } = useSafeForm(createRound.bind(null, applicationId));
+  const form = useSafeForm(createRound.bind(null, applicationId));
+  const { state, onSubmit, pending } = form;
   const formRef = useRef<HTMLFormElement>(null);
-  const handled = useRef(state);
-
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  useOnComplete(form, () => {
     if (!state?.error) {
       toast.success("Interview added");
       formRef.current?.reset();
     }
-  }, [state]);
+  });
 
   return (
     <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
@@ -112,14 +109,11 @@ export function AddInterviewForm({ applicationId }: { applicationId: string }) {
 }
 
 export function RoundCard({ round, conflict }: { round: InterviewRound; conflict: boolean }) {
-  const { state, onSubmit, pending } = useSafeForm(updateRound.bind(null, round.id));
-  const handled = useRef(state);
-
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  const form = useSafeForm(updateRound.bind(null, round.id));
+  const { state, onSubmit, pending } = form;
+  useOnComplete(form, () => {
     if (!state?.error) toast.success("Interview saved");
-  }, [state]);
+  });
 
   return (
     <li className="rounded-lg border">

@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { linkContact } from "@/app/(app)/contacts/actions";
 import { SubmitButton } from "@/components/app/submit-button";
 import { NativeSelect } from "@/components/ui/native-select";
 import { CONTACT_ROLES, CONTACT_ROLE_LABEL } from "@/lib/domain";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 export function LinkContactForm({
   applicationId,
@@ -16,14 +15,11 @@ export function LinkContactForm({
   applicationId: string;
   contacts: { id: string; label: string }[];
 }) {
-  const { state, onSubmit, pending } = useSafeForm(linkContact.bind(null, applicationId));
-  const handled = useRef(state);
-
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  const form = useSafeForm(linkContact.bind(null, applicationId));
+  const { state, onSubmit, pending } = form;
+  useOnComplete(form, () => {
     if (!state?.error) toast.success("Contact linked");
-  }, [state]);
+  });
 
   if (contacts.length === 0) {
     return (

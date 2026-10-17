@@ -48,29 +48,16 @@ export async function createApplication(_prev: ActionState, formData: FormData):
 }
 
 export async function updateApplication(id: string, _prev: ActionState, formData: FormData): Promise<ActionState> {
-  const parsed = applicationSchema.safeParse(formToObject(formData));
+  // The stage is changed only through moveApplication (the stage control), so this form can never
+  // overwrite it with a stale value.
+  const parsed = applicationSchema.omit({ stage: true }).safeParse(formToObject(formData));
   if (!parsed.success) return { error: firstError(parsed.error) };
-  const values = parsed.data;
 
   const supabase = await createClient();
-  const { data: before } = await supabase.from("applications").select("stage").eq("id", id).single();
-  if (!before) return { error: "Application not found." };
-  if (values.stage === "applied" && !values.applied_on && before.stage !== "applied") values.applied_on = today();
-
-  const { error } = await supabase.from("applications").update(values).eq("id", id);
+  const { error } = await supabase.from("applications").update(parsed.data).eq("id", id);
   if (error) return { error: "Could not save changes. Please try again." };
 
-  if (before.stage !== values.stage) {
-    await logEvent(
-      supabase,
-      id,
-      "stage_changed",
-      `Moved from ${STAGE_LABEL[before.stage as Stage]} to ${STAGE_LABEL[values.stage]}`,
-      { from: before.stage, to: values.stage },
-    );
-  } else {
-    await logEvent(supabase, id, "updated", "Updated application details");
-  }
+  await logEvent(supabase, id, "updated", "Updated application details");
   revalidatePath("/applications");
   revalidatePath(`/applications/${id}`);
   return undefined;

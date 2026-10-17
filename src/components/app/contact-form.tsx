@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Field } from "@/components/app/field";
 import { SubmitButton } from "@/components/app/submit-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import type { ActionState } from "@/lib/forms";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 export type ContactRow = {
   id: string;
@@ -33,14 +32,11 @@ export function ContactForm({
   submitLabel: string;
   toastOnSuccess?: boolean;
 }) {
-  const { state, onSubmit, pending } = useSafeForm(action);
-  const handled = useRef(state);
-
-  useEffect(() => {
-    if (state === handled.current) return;
-    handled.current = state;
+  const form = useSafeForm(action);
+  const { state, onSubmit, pending } = form;
+  useOnComplete(form, () => {
     if (toastOnSuccess && !state?.error) toast.success("Changes saved");
-  }, [state, toastOnSuccess]);
+  });
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Field } from "@/components/app/field";
 import { SubmitButton } from "@/components/app/submit-button";
@@ -16,7 +15,7 @@ import {
   type ApplicationRow,
 } from "@/lib/domain";
 import type { ActionState } from "@/lib/forms";
-import { useSafeForm } from "@/lib/use-safe-form";
+import { useOnComplete, useSafeForm } from "@/lib/use-safe-form";
 
 type Props = {
   action: (prev: ActionState, formData: FormData) => Promise<ActionState>;
@@ -24,17 +23,16 @@ type Props = {
   submitLabel: string;
   /** Show a "Saved" toast on success (edit mode; create redirects away instead). */
   toastOnSuccess?: boolean;
+  /** Hidden when editing: the stage control above the form is the only way to change a stage. */
+  showStage?: boolean;
 };
 
-export function ApplicationForm({ action, defaults = {}, submitLabel, toastOnSuccess = false }: Props) {
-  const { state, onSubmit, pending } = useSafeForm(action);
-  const lastHandled = useRef(state);
-
-  useEffect(() => {
-    if (state === lastHandled.current) return;
-    lastHandled.current = state;
+export function ApplicationForm({ action, defaults = {}, submitLabel, toastOnSuccess = false, showStage = true }: Props) {
+  const form = useSafeForm(action);
+  const { state, onSubmit, pending } = form;
+  useOnComplete(form, () => {
     if (toastOnSuccess && !state?.error) toast.success("Changes saved");
-  }, [state, toastOnSuccess]);
+  });
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
@@ -44,15 +42,17 @@ export function ApplicationForm({ action, defaults = {}, submitLabel, toastOnSuc
       <Field label="Role title" htmlFor="title">
         <Input id="title" name="title" required maxLength={200} defaultValue={defaults.title ?? ""} />
       </Field>
-      <Field label="Stage" htmlFor="stage">
-        <NativeSelect id="stage" name="stage" defaultValue={defaults.stage ?? "saved"}>
-          {STAGES.map((s) => (
-            <option key={s} value={s}>
-              {STAGE_LABEL[s]}
-            </option>
-          ))}
-        </NativeSelect>
-      </Field>
+      {showStage ? (
+        <Field label="Stage" htmlFor="stage">
+          <NativeSelect id="stage" name="stage" defaultValue={defaults.stage ?? "saved"}>
+            {STAGES.map((s) => (
+              <option key={s} value={s}>
+                {STAGE_LABEL[s]}
+              </option>
+            ))}
+          </NativeSelect>
+        </Field>
+      ) : null}
       <Field label="Priority" htmlFor="priority">
         <NativeSelect id="priority" name="priority" defaultValue={defaults.priority ?? "medium"}>
           {PRIORITIES.map((p) => (
