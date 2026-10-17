@@ -1,7 +1,10 @@
 import {
+  BarChart3,
   BriefcaseBusiness,
+  CalendarDays,
   CheckSquare,
   FileText,
+  FileSignature,
   FolderOpen,
   LayoutDashboard,
   ScanSearch,
@@ -16,10 +19,13 @@ export type NavItem = { href: string; label: string; icon: LucideIcon };
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/applications", label: "Applications", icon: BriefcaseBusiness },
+  { href: "/calendar", label: "Calendar", icon: CalendarDays },
   { href: "/tasks", label: "Tasks", icon: CheckSquare },
   { href: "/contacts", label: "Contacts & Referrals", icon: Users },
   { href: "/jobs", label: "Job Capture", icon: ScanSearch },
   { href: "/resume", label: "Resume Studio", icon: FileText },
+  { href: "/cover-letter", label: "Cover Letter Studio", icon: FileSignature },
   { href: "/documents", label: "Document Vault", icon: FolderOpen },
+  { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

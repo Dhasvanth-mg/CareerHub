@@ -95,3 +95,31 @@ export function deadlineLabel(date: string): { text: string; tone: "overdue" | "
 export function nowMs(): number {
   return Date.now();
 }
+
+export const ROUND_TYPES = ["recruiter_screen", "technical", "behavioral", "case", "onsite", "assessment", "other"] as const;
+export type RoundType = (typeof ROUND_TYPES)[number];
+export const ROUND_TYPE_LABEL: Record<RoundType, string> = {
+  recruiter_screen: "Recruiter screen",
+  technical: "Technical",
+  behavioral: "Behavioral",
+  case: "Case",
+  onsite: "Onsite",
+  assessment: "Assessment",
+  other: "Other",
+};
+export const ROUND_STATUSES = ["scheduled", "completed", "cancelled"] as const;
+export const ROUND_STATUS_LABEL = { scheduled: "Scheduled", completed: "Completed", cancelled: "Cancelled" } as const;
+
+export type InterviewRound = {
+  id: string;
+  application_id: string;
+  round_type: RoundType;
+  status: (typeof ROUND_STATUSES)[number];
+  scheduled_at: string | null;
+  duration_minutes: number | null;
+  location: string | null;
+  interviewers: string | null;
+  prep_notes: string | null;
+  questions_asked: string | null;
+  debrief: string | null;
+};

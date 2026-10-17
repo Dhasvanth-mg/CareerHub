@@ -12,10 +12,12 @@ export function ResumeRevisionEditor({
   documentId,
   title,
   initial,
+  kind = "resume",
 }: {
   documentId: string;
   title: string;
   initial: string;
+  kind?: "resume" | "cover_letter";
 }) {
   const [text, setText] = useState(initial);
   const [busy, setBusy] = useState(false);
@@ -25,7 +27,7 @@ export function ResumeRevisionEditor({
   async function save() {
     setBusy(true);
     setError(null);
-    const result = await saveTextVersion({ kind: "resume", title, documentId, text });
+    const result = await saveTextVersion({ kind, title, documentId, text });
     setBusy(false);
     if (result?.error) {
       setError(result.error);
@@ -38,7 +40,7 @@ export function ResumeRevisionEditor({
   return (
     <div className="space-y-3">
       <label htmlFor="revision-text" className="sr-only">
-        Resume text
+        {kind === "resume" ? "Resume text" : "Cover letter text"}
       </label>
       <Textarea
         id="revision-text"

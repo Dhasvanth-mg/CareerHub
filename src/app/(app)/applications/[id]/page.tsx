@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { NativeSelect } from "@/components/ui/native-select";
 import { ApplicationForm } from "@/components/app/application-form";
 import { ConfirmForm } from "@/components/app/confirm-form";
+import { AddInterviewForm, RoundCard } from "@/components/app/interviews";
 import { LinkContactForm } from "@/components/app/link-contact-form";
 import { NextActionPanel } from "@/components/app/next-action-panel";
 import { LocalTime } from "@/components/app/local-time";
@@ -18,8 +19,10 @@ import {
   REFERRAL_LABEL,
   REFERRAL_STATUSES,
   nowMs,
+  type InterviewRound,
   type ApplicationRow,
 } from "@/lib/domain";
+import { overlappingRounds } from "@/lib/calendar";
 import { setSubmittedVersion } from "../../documents/actions";
 import { deleteApplication, setArchived, updateApplication } from "../actions";
 import { setReferralStatus, unlinkContact } from "../../contacts/actions";
@@ -90,6 +93,15 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
     },
   ];
   const jobPostingId = (app as { job_posting_id: string | null }).job_posting_id;
+
+  const { data: allRounds } = await supabase
+    .from("interview_rounds")
+    .select("id, application_id, round_type, status, scheduled_at, duration_minutes, location, interviewers, prep_notes, questions_asked, debrief")
+    .order("scheduled_at", { ascending: true, nullsFirst: false })
+    .limit(500);
+  const rounds = (allRounds ?? []) as InterviewRound[];
+  const myRounds = rounds.filter((r) => r.application_id === id);
+  const roundConflicts = overlappingRounds(rounds);
 
   const events = eventsRes.data ?? [];
   const tasks = (tasksRes.data ?? []) as TaskItem[];
@@ -207,6 +219,27 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
           <Link href="/documents" className="underline underline-offset-4">
             Document Vault
           </Link>
+        </div>
+      </section>
+
+      <section aria-labelledby="interviews" className="space-y-4">
+        <h2 id="interviews" className="text-lg font-medium">
+          Interviews
+        </h2>
+        {myRounds.length > 0 ? (
+          <ul className="space-y-2">
+            {myRounds.map((r) => (
+              <RoundCard key={r.id} round={r} conflict={roundConflicts.has(r.id)} />
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            No interviews yet. Add one and it shows up on your calendar, with a place for prep notes and a debrief afterwards.
+          </p>
+        )}
+        <div className="rounded-lg border p-4">
+          <h3 className="mb-3 text-sm font-medium">Add an interview</h3>
+          <AddInterviewForm applicationId={id} />
         </div>
       </section>
 
