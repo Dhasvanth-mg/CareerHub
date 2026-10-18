@@ -127,7 +127,7 @@ export function AddOfferForm({ applications }: { applications: { id: string; lab
     return <p className="text-sm text-muted-foreground">Every application already has an offer saved, or you have no applications yet.</p>;
   }
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
+    <form ref={formRef} method="post" onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
       <Field label="Application" htmlFor="new-offer-app" className="sm:col-span-2">
         <NativeSelect id="new-offer-app" name="application_id" defaultValue={applications[0]?.id} required>
           {applications.map((a) => (
@@ -164,7 +164,7 @@ export function OfferCard({ offer }: { offer: OfferRow }) {
           <span className="font-medium">{offer.label}</span>
           <span className="text-muted-foreground">{total === null ? "No pay entered" : `${money(total, offer.currency)} / year`}</span>
         </summary>
-        <form onSubmit={onSubmit} className="grid gap-3 border-t p-3 sm:grid-cols-2">
+        <form method="post" onSubmit={onSubmit} className="grid gap-3 border-t p-3 sm:grid-cols-2">
           <OfferFields offer={offer} idPrefix={offer.id} />
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
             <SubmitButton pending={pending}>Save changes</SubmitButton>
@@ -205,7 +205,7 @@ export function OfferComparison({ offers, initialWeights }: { offers: OfferRow[]
 
   return (
     <div className="space-y-4">
-      <form onSubmit={onSubmit} className="space-y-3">
+      <form method="post" onSubmit={onSubmit} className="space-y-3">
         <fieldset className="grid gap-3 sm:grid-cols-3">
           <legend className="mb-1 text-sm font-medium">How much does each thing matter to you? (0 to 10)</legend>
           {ALL_CRITERIA.map((c) => (

@@ -24,7 +24,7 @@ function Feedback({ state }: { state: AuthState }) {
 export function ForgotPasswordForm() {
   const { state, onSubmit, pending } = useSafeForm(requestPasswordReset);
   return (
-    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
       <Field label="Email" htmlFor="email">
         <Input id="email" name="email" type="email" autoComplete="email" required />
       </Field>
@@ -44,7 +44,7 @@ export function ForgotPasswordForm() {
 export function ResetPasswordForm() {
   const { state, onSubmit, pending } = useSafeForm(updatePassword);
   return (
-    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
       <Field label="New password" htmlFor="password" hint="At least 8 characters.">
         <Input id="password" name="password" type="password" autoComplete="new-password" minLength={8} required />
       </Field>
@@ -69,7 +69,7 @@ export function ResetPasswordForm() {
 export function ResendConfirmationForm() {
   const { state, onSubmit, pending } = useSafeForm(resendConfirmation);
   return (
-    <form onSubmit={onSubmit} className="space-y-2">
+    <form method="post" onSubmit={onSubmit} className="space-y-2">
       <SubmitButton pending={pending} pendingText="Sending…" variant="outline" className="w-full">
         Resend the email
       </SubmitButton>

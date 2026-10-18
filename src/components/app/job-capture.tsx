@@ -19,7 +19,7 @@ export function JobCapture() {
 
   return (
     <div className="space-y-8">
-      <form onSubmit={onSubmit} className="space-y-4 rounded-lg border p-4">
+      <form method="post" onSubmit={onSubmit} className="space-y-4 rounded-lg border p-4">
         <input type="hidden" name="mode" value={mode} />
         <div role="group" aria-label="Import method" className="flex w-fit rounded-lg border p-0.5 text-sm">
           {(["text", "url"] as const).map((m) => (
@@ -103,7 +103,7 @@ function ReviewForm({ state }: { state: NonNullable<ExtractState> }) {
         </p>
       ) : null}
 
-      <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
+      <form method="post" onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
         <input type="hidden" name="posting_id" value={state.postingId} />
         <Field label="Company" htmlFor="r-company" hint={hint("company_name", x.company_name)}>
           <Input id="r-company" name="company_name" required maxLength={200} defaultValue={x.company_name ?? ""} />

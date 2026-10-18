@@ -92,7 +92,7 @@ export function CopilotChat({ applicationId, messages }: { applicationId: string
         </div>
       )}
 
-      <form ref={formRef} onSubmit={onSubmit} className="space-y-2">
+      <form ref={formRef} method="post" onSubmit={onSubmit} className="space-y-2">
         <label htmlFor="copilot-q" className="sr-only">
           Ask about this application
         </label>

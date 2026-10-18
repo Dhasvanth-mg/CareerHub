@@ -34,7 +34,7 @@ export function LinkContactForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-2">
+    <form method="post" onSubmit={onSubmit} className="flex flex-wrap items-end gap-2">
       <div>
         <label htmlFor="link-contact" className="mb-1 block text-xs text-muted-foreground">
           Contact

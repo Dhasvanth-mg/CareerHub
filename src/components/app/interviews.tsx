@@ -94,7 +94,7 @@ export function AddInterviewForm({ applicationId }: { applicationId: string }) {
   });
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
+    <form ref={formRef} method="post" onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
       <RoundFields key={resetKey} idPrefix="new-round" />
       <input type="hidden" name="status" value="scheduled" />
       <div className="flex items-center gap-3 sm:col-span-2">
@@ -141,7 +141,7 @@ export function RoundCard({ round, conflict }: { round: InterviewRound; conflict
             <Badge variant="secondary">{ROUND_STATUS_LABEL[round.status]}</Badge>
           </span>
         </summary>
-        <form onSubmit={onSubmit} className="grid gap-3 border-t p-3 sm:grid-cols-2">
+        <form method="post" onSubmit={onSubmit} className="grid gap-3 border-t p-3 sm:grid-cols-2">
           <Field label="Status" htmlFor={`${round.id}-status`}>
             <NativeSelect id={`${round.id}-status`} name="status" defaultValue={round.status}>
               {ROUND_STATUSES.map((s) => (

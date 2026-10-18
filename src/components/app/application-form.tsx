@@ -35,7 +35,7 @@ export function ApplicationForm({ action, defaults = {}, submitLabel, toastOnSuc
   });
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
+    <form method="post" onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
       <Field label="Company" htmlFor="company_name">
         <Input id="company_name" name="company_name" required maxLength={200} defaultValue={defaults.company_name ?? ""} />
       </Field>

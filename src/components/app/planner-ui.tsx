@@ -35,7 +35,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
     if (state?.message) toast.success(state.message);
   });
   return (
-    <form onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
+    <form method="post" onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
       <Field label="Roles you're aiming for" htmlFor="p-roles" hint="Separate with commas.">
         <Input id="p-roles" name="target_roles" defaultValue={profile.target_roles.join(", ")} />
       </Field>
@@ -71,7 +71,7 @@ export function RankWeightsForm({ weights }: { weights: RankWeights }) {
     if (state?.message) toast.success(state.message);
   });
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
+    <form method="post" onSubmit={onSubmit} className="space-y-3">
       <fieldset className="grid gap-3 sm:grid-cols-5">
         <legend className="mb-1 text-sm font-medium">How much does each thing matter? (0 to 10)</legend>
         {RANK_CRITERIA.map((c) => (
@@ -116,7 +116,7 @@ export function RatingsForm({
     if (state?.message) toast.success("Ratings saved");
   });
   return (
-    <form ref={ref} onSubmit={onSubmit} className="space-y-2">
+    <form ref={ref} method="post" onSubmit={onSubmit} className="space-y-2">
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
         {RANK_CRITERIA.map((c) => (
           <div key={c.key} className="space-y-0.5">
@@ -158,7 +158,7 @@ export function AddMilestoneForm() {
     }
   });
   return (
-    <form ref={ref} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-3">
+    <form ref={ref} method="post" onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-3">
       <Field label="Milestone" htmlFor="m-title" className="sm:col-span-3">
         <Input id="m-title" name="title" required maxLength={200} placeholder="Finish an embedded systems course" />
       </Field>

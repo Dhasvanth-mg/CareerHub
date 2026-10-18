@@ -14,7 +14,7 @@ export function ExtractedTextEditor({ versionId, initial }: { versionId: string;
   });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
+    <form method="post" onSubmit={onSubmit} className="space-y-3">
       <label htmlFor="extracted-text" className="text-sm font-medium">
         Extracted text
       </label>

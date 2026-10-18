@@ -36,7 +36,7 @@ export function TaskForm({ applicationId, applications }: Props) {
   });
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
+    <form ref={formRef} method="post" onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
       {applicationId ? <input type="hidden" name="application_id" value={applicationId} /> : null}
       <Field label="Task" htmlFor="task-title" className="sm:col-span-2">
         <Input id="task-title" name="title" required maxLength={300} placeholder="Follow up with recruiter" />

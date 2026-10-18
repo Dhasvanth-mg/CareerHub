@@ -35,7 +35,7 @@ export function CoverLetterAnalysisForm({
 }) {
   const { state, onSubmit, pending } = useSafeForm(runCoverLetterAnalysis);
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form method="post" onSubmit={onSubmit} className="space-y-4">
       {applicationId ? <input type="hidden" name="application_id" value={applicationId} /> : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Cover letter" htmlFor="cl-letter">
@@ -136,7 +136,7 @@ export function CoverLetterDraftForm({
 
   return (
     <div className="space-y-4">
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form method="post" onSubmit={onSubmit} className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Resume to draw from" htmlFor="dr-resume">
             <NativeSelect id="dr-resume" name="resume_version_id" defaultValue={resumes[0]?.id} required>

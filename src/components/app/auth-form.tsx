@@ -40,7 +40,7 @@ export function AuthForm({ mode, action, googleAction, next, initialError, notic
         </p>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-4" noValidate>
+      <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
         {next ? <input type="hidden" name="next" value={next} /> : null}
         {!isLogin ? (
           // Honeypot: invisible to people, tempting to bots. A filled value means the signup is ignored.

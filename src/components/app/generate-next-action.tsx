@@ -7,7 +7,7 @@ import { useSafeForm } from "@/lib/use-safe-form";
 export function GenerateNextAction({ applicationId, hasExisting }: { applicationId: string; hasExisting: boolean }) {
   const { state, onSubmit, pending } = useSafeForm(generateNextAction.bind(null, applicationId));
   return (
-    <form onSubmit={onSubmit} className="flex flex-wrap items-center gap-3">
+    <form method="post" onSubmit={onSubmit} className="flex flex-wrap items-center gap-3">
       <SubmitButton pending={pending} pendingText="Thinking…" variant={hasExisting ? "outline" : "default"}>
         {hasExisting ? "Suggest again" : "Suggest a next step"}
       </SubmitButton>

@@ -33,7 +33,7 @@ export function PrepGenerateForm({
   });
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form method="post" onSubmit={onSubmit} className="space-y-4">
       <input type="hidden" name="round_id" value={roundId ?? ""} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Draw from this resume" htmlFor="prep-resume" hint="Questions can point to real experience in it.">
@@ -163,7 +163,7 @@ export function PrepItemCard({ item }: { item: PrepItem }) {
         </details>
       ) : null}
 
-      <form onSubmit={onSubmit} className="space-y-2">
+      <form method="post" onSubmit={onSubmit} className="space-y-2">
         <label htmlFor={`ans-${item.id}`} className="text-sm font-medium">
           Your answer
         </label>

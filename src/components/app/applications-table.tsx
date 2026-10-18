@@ -59,7 +59,7 @@ export function ApplicationsTable({ rows, headers, archivedView }: { rows: Table
   }
 
   return (
-    <form ref={formRef} onSubmit={guard} className="space-y-3">
+    <form ref={formRef} method="post" onSubmit={guard} className="space-y-3">
       <div
         className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/30 p-2 text-sm"
         role="group"

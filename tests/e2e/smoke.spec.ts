@@ -139,3 +139,22 @@ test.describe("hardening", () => {
     }
   });
 });
+
+test.describe("forms never put typed values in the address bar", () => {
+  // Without JavaScript (or before the page finishes loading) a form falls back to a plain browser
+  // submit. That must never be a GET, which would put a password into the URL and browser history.
+  test.use({ javaScriptEnabled: false });
+
+  for (const path of ["/login", "/signup"]) {
+    test(`${path} submits as POST when scripts have not run`, async ({ page }) => {
+      await page.goto(path);
+      await page.getByLabel("Email").fill("person@example.com");
+      await page.getByLabel("Password").fill("a-secret-password-123");
+      await page.getByRole("button", { name: /log in|sign up/i }).click();
+      await page.waitForLoadState();
+      expect(page.url()).not.toContain("password");
+      expect(page.url()).not.toContain("a-secret-password");
+      expect(page.url()).not.toContain("person%40example.com");
+    });
+  }
+});

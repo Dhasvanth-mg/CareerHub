@@ -39,7 +39,7 @@ export function ContactForm({
   });
 
   return (
-    <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
+    <form method="post" onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
       <Field label="Name" htmlFor="name" className="sm:col-span-2">
         <Input id="name" name="name" required maxLength={200} defaultValue={defaults.name ?? ""} />
       </Field>

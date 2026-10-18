@@ -66,7 +66,7 @@ export function AddEvidenceForm() {
     }
   });
   return (
-    <form ref={formRef} onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
+    <form ref={formRef} method="post" onSubmit={onSubmit} className="grid gap-3 sm:grid-cols-2">
       <Fields idPrefix="new-ev" />
       <div className="flex items-center gap-3 sm:col-span-2">
         <SubmitButton pending={pending}>Add to library</SubmitButton>
@@ -96,7 +96,7 @@ export function EvidenceCard({ item }: { item: EvidenceRow }) {
           </span>
           <Badge variant="secondary">{EVIDENCE_KIND_LABEL[item.kind]}</Badge>
         </summary>
-        <form onSubmit={onSubmit} className="grid gap-3 border-t p-3 sm:grid-cols-2">
+        <form method="post" onSubmit={onSubmit} className="grid gap-3 border-t p-3 sm:grid-cols-2">
           <Fields item={item} idPrefix={item.id} />
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
             <SubmitButton pending={pending}>Save</SubmitButton>

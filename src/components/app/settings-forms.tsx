@@ -15,7 +15,7 @@ export function ProfileForm({ displayName }: { displayName: string }) {
   });
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-3">
+    <form method="post" onSubmit={onSubmit} className="flex flex-wrap items-end gap-3">
       <Field label="Display name" htmlFor="display_name" className="w-64">
         <Input id="display_name" name="display_name" maxLength={100} defaultValue={displayName} />
       </Field>
@@ -35,7 +35,7 @@ export function DeleteAccountForm() {
   const form = useSafeForm(deleteAccount);
   const { state, onSubmit, pending } = form;
   return (
-    <form onSubmit={onSubmit} className="space-y-3">
+    <form method="post" onSubmit={onSubmit} className="space-y-3">
       <Field label="Type DELETE to confirm" htmlFor="confirm" className="w-64">
         <Input id="confirm" name="confirm" autoComplete="off" required />
       </Field>

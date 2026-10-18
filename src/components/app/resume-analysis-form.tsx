@@ -27,7 +27,7 @@ export function ResumeAnalysisForm({
   const { state, onSubmit, pending } = useSafeForm(runResumeAnalysis);
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
+    <form method="post" onSubmit={onSubmit} className="space-y-4">
       {applicationId ? <input type="hidden" name="application_id" value={applicationId} /> : null}
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Resume" htmlFor="ra-version">
