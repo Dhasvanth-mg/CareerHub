@@ -7,6 +7,7 @@ import { saveTextVersion } from "@/app/(app)/documents/actions";
 import { generateCoverLetterDraft, runCoverLetterAnalysis } from "@/app/(app)/cover-letter/actions";
 import { Field } from "@/components/app/field";
 import { SubmitButton } from "@/components/app/submit-button";
+import { UseEvidenceCheckbox } from "@/components/app/use-evidence-checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -22,6 +23,7 @@ export function CoverLetterAnalysisForm({
   defaultLetter,
   defaultJob,
   applicationId,
+  evidenceCount = 0,
 }: {
   letters: Option[];
   resumes: Option[];
@@ -29,6 +31,7 @@ export function CoverLetterAnalysisForm({
   defaultLetter?: string;
   defaultJob?: string;
   applicationId?: string;
+  evidenceCount?: number;
 }) {
   const { state, onSubmit, pending } = useSafeForm(runCoverLetterAnalysis);
   return (
@@ -69,6 +72,7 @@ export function CoverLetterAnalysisForm({
           </NativeSelect>
         </Field>
       </div>
+      <UseEvidenceCheckbox count={evidenceCount} />
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" name="show_score" value="1" defaultChecked className="mt-1" />
         <span>
@@ -95,7 +99,17 @@ export function CoverLetterAnalysisForm({
   );
 }
 
-export function CoverLetterDraftForm({ resumes, jobs, defaultJob }: { resumes: Option[]; jobs: Option[]; defaultJob?: string }) {
+export function CoverLetterDraftForm({
+  resumes,
+  jobs,
+  defaultJob,
+  evidenceCount = 0,
+}: {
+  resumes: Option[];
+  jobs: Option[];
+  defaultJob?: string;
+  evidenceCount?: number;
+}) {
   const { state, onSubmit, pending } = useSafeForm(generateCoverLetterDraft);
   const [edited, setEdited] = useState<{ source: string | undefined; text: string }>({ source: undefined, text: "" });
   const [title, setTitle] = useState("");
@@ -146,6 +160,7 @@ export function CoverLetterDraftForm({ resumes, jobs, defaultJob }: { resumes: O
             <Input id="dr-notes" name="notes" maxLength={600} placeholder="For example: my teaching background and the robotics club" />
           </Field>
         </div>
+        <UseEvidenceCheckbox count={evidenceCount} />
         <div className="flex flex-wrap items-center gap-3">
           <SubmitButton pending={pending} pendingText="Drafting…" variant="secondary">
             Draft a first version

@@ -3,6 +3,7 @@
 import { runResumeAnalysis } from "@/app/(app)/resume/actions";
 import { Field } from "@/components/app/field";
 import { SubmitButton } from "@/components/app/submit-button";
+import { UseEvidenceCheckbox } from "@/components/app/use-evidence-checkbox";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useSafeForm } from "@/lib/use-safe-form";
 
@@ -14,12 +15,14 @@ export function ResumeAnalysisForm({
   defaultVersion,
   defaultJob,
   applicationId,
+  evidenceCount = 0,
 }: {
   versions: Option[];
   jobs: Option[];
   defaultVersion?: string;
   defaultJob?: string;
   applicationId?: string;
+  evidenceCount?: number;
 }) {
   const { state, onSubmit, pending } = useSafeForm(runResumeAnalysis);
 
@@ -46,6 +49,7 @@ export function ResumeAnalysisForm({
           </NativeSelect>
         </Field>
       </div>
+      <UseEvidenceCheckbox count={evidenceCount} />
       <label className="flex items-start gap-2 text-sm">
         <input type="checkbox" name="show_score" value="1" defaultChecked className="mt-1" />
         <span>

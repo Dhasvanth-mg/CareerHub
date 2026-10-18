@@ -123,3 +123,16 @@ export type InterviewRound = {
   questions_asked: string | null;
   debrief: string | null;
 };
+
+export const EVIDENCE_KINDS = ["project", "achievement", "role", "skill", "certification", "coursework", "volunteering", "other"] as const;
+export type EvidenceKind = (typeof EVIDENCE_KINDS)[number];
+export const EVIDENCE_KIND_LABEL: Record<EvidenceKind, string> = {
+  project: "Project",
+  achievement: "Achievement",
+  role: "Role",
+  skill: "Skill",
+  certification: "Certification",
+  coursework: "Coursework",
+  volunteering: "Volunteering",
+  other: "Other",
+};

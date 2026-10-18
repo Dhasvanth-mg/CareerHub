@@ -8,6 +8,7 @@ import { logEvent } from "@/lib/events";
 import { firstError, formToObject, type ActionState } from "@/lib/forms";
 import { AiUnavailableError } from "@/lib/ai/groq";
 import { checkAiAllowed } from "@/lib/ai/guard";
+import { evidenceSources } from "@/lib/ai/sources";
 import {
   RESUME_PROMPT_VERSION,
   RESUME_RUBRIC_VERSION,
@@ -24,6 +25,7 @@ const schema = z.object({
     .pipe(z.string().uuid().nullable())
     .default(null),
   show_score: z.string().optional(),
+  use_evidence: z.string().optional(),
 });
 
 export async function runResumeAnalysis(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -78,7 +80,12 @@ export async function runResumeAnalysis(_prev: ActionState, formData: FormData):
 
   let result;
   try {
-    result = await analyzeResume({ resumeText: version.extracted_text, requirements, wantScore });
+    result = await analyzeResume({
+      resumeText: version.extracted_text,
+      requirements,
+      wantScore,
+      extraSources: v.use_evidence === "1" ? await evidenceSources(supabase) : [],
+    });
   } catch (e) {
     const message = e instanceof AiUnavailableError ? e.message : "The analysis couldn't be completed.";
     await supabase.from("analysis_runs").insert({ ...base, status: "failed", error: message });

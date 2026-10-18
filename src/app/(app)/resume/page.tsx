@@ -31,7 +31,9 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
   const applicationParam = one(sp.application);
 
   const supabase = await createClient();
-  const [versionsRes, jobsRes, runsRes, appRes] = await Promise.all([
+  const [evidenceRes, versionsRes, jobsRes, runsRes, appRes] = await Promise.all([
+    // How many evidence-library items could be used as extra proof.
+    supabase.from("evidence_items").select("id", { count: "exact", head: true }),
     supabase
       .from("document_versions")
       .select("id, version, file_name, documents!inner(title, kind)")
@@ -109,6 +111,7 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
               defaultVersion={one(sp.version)}
               defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined}
               applicationId={app?.id}
+              evidenceCount={evidenceRes.count ?? 0}
             />
           </AiGate>
         </section>

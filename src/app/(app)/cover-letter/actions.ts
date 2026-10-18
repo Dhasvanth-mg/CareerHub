@@ -8,6 +8,7 @@ import { logEvent } from "@/lib/events";
 import { firstError, formToObject, type ActionState } from "@/lib/forms";
 import { AiUnavailableError } from "@/lib/ai/groq";
 import { checkAiAllowed } from "@/lib/ai/guard";
+import { evidenceSources } from "@/lib/ai/sources";
 import {
   COVER_PROMPT_VERSION,
   COVER_RUBRIC_VERSION,
@@ -59,6 +60,7 @@ const analyzeSchema = z.object({
   resume_version_id: optUuid,
   application_id: optUuid,
   show_score: z.string().optional(),
+  use_evidence: z.string().optional(),
 });
 
 export async function runCoverLetterAnalysis(_prev: ActionState, formData: FormData): Promise<ActionState> {
@@ -99,6 +101,7 @@ export async function runCoverLetterAnalysis(_prev: ActionState, formData: FormD
       jobTitle: [job.posting.title, job.posting.company_name].filter(Boolean).join(" at ") || "the role",
       requirements: job.requirements,
       wantScore: v.show_score === "1",
+      extraSources: v.use_evidence === "1" ? await evidenceSources(supabase) : [],
     });
   } catch (e) {
     const message = e instanceof AiUnavailableError ? e.message : "The analysis couldn't be completed.";
@@ -137,6 +140,7 @@ const draftSchemaIn = z.object({
   resume_version_id: uuid,
   job_posting_id: uuid,
   notes: z.string().trim().max(600).default(""),
+  use_evidence: z.string().optional(),
 });
 
 export async function generateCoverLetterDraft(_prev: DraftState, formData: FormData): Promise<DraftState> {
@@ -160,6 +164,7 @@ export async function generateCoverLetterDraft(_prev: DraftState, formData: Form
       company: job.posting.company_name,
       requirements: job.requirements,
       notes: v.notes || null,
+      extraSources: v.use_evidence === "1" ? await evidenceSources(supabase) : [],
     });
     return {
       letter: draft.letter,

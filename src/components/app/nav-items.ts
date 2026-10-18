@@ -7,6 +7,7 @@ import {
   FileText,
   FileSignature,
   FolderOpen,
+  Layers,
   LayoutDashboard,
   ScanSearch,
   Settings,
@@ -28,6 +29,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/resume", label: "Resume Studio", icon: FileText },
   { href: "/cover-letter", label: "Cover Letter Studio", icon: FileSignature },
   { href: "/documents", label: "Document Vault", icon: FolderOpen },
+  { href: "/evidence", label: "Evidence library", icon: Layers },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

@@ -39,7 +39,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
   const applicationParam = one(sp.application);
 
   const supabase = await createClient();
-  const [letters, resumes, jobsRes, runsRes, appRes] = await Promise.all([
+  const [letters, resumes, jobsRes, runsRes, appRes, evidenceRes] = await Promise.all([
     versionsOfKind(supabase, "cover_letter"),
     versionsOfKind(supabase, "resume"),
     // Only postings that belong to an application, so abandoned imports never clutter the picker.
@@ -58,7 +58,9 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
     applicationParam && /^[0-9a-f-]{36}$/i.test(applicationParam)
       ? supabase.from("applications").select("id, job_posting_id").eq("id", applicationParam).maybeSingle()
       : Promise.resolve({ data: null }),
+    supabase.from("evidence_items").select("id", { count: "exact", head: true }),
   ]);
+  const evidenceCount = evidenceRes.count ?? 0;
 
   const seen = new Set<string>();
   const jobs = (jobsRes.data ?? []).flatMap((a) => {
@@ -111,6 +113,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
                   defaultLetter={one(sp.letter)}
                   defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined}
                   applicationId={app?.id}
+                  evidenceCount={evidenceCount}
                 />
               )}
             </section>
@@ -128,7 +131,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
                   first. The draft is built only from what it says.
                 </p>
               ) : (
-                <CoverLetterDraftForm resumes={resumes} jobs={jobs} defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined} />
+                <CoverLetterDraftForm resumes={resumes} jobs={jobs} defaultJob={one(sp.job) ?? app?.job_posting_id ?? undefined} evidenceCount={evidenceCount} />
               )}
             </section>
           </div>
