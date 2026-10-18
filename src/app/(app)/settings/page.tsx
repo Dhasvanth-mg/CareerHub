@@ -3,6 +3,8 @@ import { Download } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { AiNoticeText } from "@/components/app/ai-gate";
 import { DeleteAccountForm, ProfileForm } from "@/components/app/settings-forms";
+import { StorageSection } from "@/components/app/storage-section";
+import { ShareSection } from "@/components/app/share-section";
 import { SignInMethods } from "@/components/app/sign-in-methods";
 import { ThemeChooser } from "@/components/app/theme";
 import { LocalTime } from "@/components/app/local-time";
@@ -73,6 +75,10 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
           </div>
         )}
       </section>
+
+      <StorageSection userId={auth.user.id} />
+
+      <ShareSection />
 
       <section aria-labelledby="data" className="space-y-3">
         <h2 id="data" className="text-lg font-medium">

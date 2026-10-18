@@ -139,6 +139,25 @@ export default async function DocumentPage({ params, searchParams }: PageProps<"
         </section>
       ) : null}
 
+      {selected?.extracted_text?.trim() ? (
+        <section aria-labelledby="export" className="space-y-3">
+          <h2 id="export" className="text-lg font-medium">
+            Export version {selected.version}
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Rebuilds a clean, single-column file from the text above, which applications and recruiter tools read reliably. Your original
+            file keeps its own design: use Download for that. Fix any wrong text above first, and save.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {(["pdf", "docx", "txt"] as const).map((f) => (
+              <Button key={f} nativeButton={false} variant="outline" size="sm" render={<a href={`/api/documents/export/${selected.id}?format=${f}`} />}>
+                <Download aria-hidden="true" /> {f === "pdf" ? "PDF" : f === "docx" ? "Word (.docx)" : "Plain text"}
+              </Button>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section aria-labelledby="newver" className="space-y-3 rounded-lg border p-4">
         <h2 id="newver" className="font-medium">
           Add a new version

@@ -19,6 +19,12 @@ The AI only **suggests**. It cites the parts of your own record or document it r
 | **Action Center** | One list of what needs attention across every application (overdue tasks, close deadlines, interviews to prepare for, debriefs, quiet follow-ups), each with the dates behind it. Add as a task, snooze or dismiss. |
 | **Tasks and calendar** | Tasks with timezone-safe due dates and snooze. A calendar of interviews, task due dates and deadlines, with overlap detection. |
 | **Calendar sync** | Export chosen interviews, tasks and deadlines to an .ics file for Google, Apple or Outlook. Import an .ics file, preview it, tick the events you want and add them as tasks. Time zones are converted and re-importing never duplicates. |
+| **CSV import** | Bring in an existing spreadsheet tracker: columns are matched for you, stages and dates are cleaned up, rows are previewed and duplicates skipped. |
+| **Timed practice** | Answer your interview questions against a clock, then review them and ask for feedback. Nothing goes to the AI during the session. |
+| **Resume export** | Rebuild any resume version as a clean PDF, Word or plain-text file for applications and recruiter tools. |
+| **Share your progress** | A read-only link for a mentor or advisor: companies, roles, stages and dates only. Expires on its own and can be turned off. |
+| **Search and shortcuts** | Press / or Ctrl/Cmd+K to search everything or jump to a page; g then a letter navigates; n adds an application; ? lists them all. |
+| **Appearance and account** | Light, dark or system theme, a getting-started checklist, and connecting or removing GitHub, Google, LinkedIn and email sign-in methods. |
 | **Contacts and referrals** | Contacts linked to applications with a referral status per application. |
 | **Interviews and prep** | Rounds per application with prep notes and a debrief. AI practice questions tied to the job and your real experience, and feedback on your written answers that flags claims you can't back up. |
 | **Job Capture** | Paste a posting or a link. AI extracts the fields and requirements for you to review. Quotes are verified against the posting, uncertain fields are flagged, duplicates are warned about. |

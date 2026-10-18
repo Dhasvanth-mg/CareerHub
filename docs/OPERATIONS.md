@@ -39,15 +39,29 @@ Never paste secrets into chats or commit them. `.env*` files are git-ignored.
 
 - `AI_USER_HOURLY_LIMIT` (default 30) and `AI_GLOBAL_DAILY_LIMIT` (default 3000) cap AI use. When the global cap is hit, AI features pause for everyone until the rolling 24 hours clear. Raise or lower them in Vercel and redeploy.
 - Sign-in, signup, reset and resend attempts are rate limited per address and per email. A hidden honeypot field on signup quietly ignores bots.
-- The database caps rows per account (applications 2000, contacts 2000, tasks 5000, documents 200, versions 1000, postings 1000, analyses 2000, interviews 1000, prep questions 3000, copilot messages 5000, evidence 500, offers 200, milestones 500) and total document storage (100 MB).
+- The database caps rows per account (applications 2000, contacts 2000, tasks 5000, documents 200, versions 1000, postings 1000, analyses 2000, interviews 1000, prep questions 3000, copilot messages 5000, evidence 500, offers 200, milestones 500, share links 20) and total document storage (100 MB).
 - Uploads are limited to 10 MB, PDF or plain text, and PDFs over 80 pages are refused.
 
 ## Known gaps and decisions
 
 - **Email confirmation is off.** Anyone can sign up with an address they do not own. Turning it on needs SMTP: run `scripts/apply-auth-config.mjs` with SMTP settings and a Supabase access token, then set `NEXT_PUBLIC_EMAIL_FLOWS=1`. Password reset is hidden until then.
 - **Social sign-in (GitHub, Google, LinkedIn) is built but off** until each provider is configured. Follow `docs/SOCIAL_SIGNIN.md`; no email sending is needed.
-- **Files uploaded but never saved** (an upload that fails after the file reaches storage) are not swept automatically yet.
+- **Files uploaded but never saved** (an interrupted upload) are removed automatically the next time that person saves an upload, and from Settings, Storage. Files younger than two hours are never touched.
 - **No point-in-time database backups** on the free Supabase plan. Users can export their own data; consider a scheduled export or a paid plan before relying on it.
+
+## Admin overview
+
+`/admin` shows counts only (users, sign-ups, sign-in methods, AI use against the daily cap, rows stored, storage). It is hidden from everyone who is not listed in `public.admins`, which cannot be edited through the API. To make someone an admin, run this once in the Supabase SQL editor with their user id (Authentication, Users):
+
+```sql
+insert into public.admins (user_id) values ('<user id>');
+```
+
+Remove them with `delete from public.admins where user_id = '<user id>';`.
+
+## Share links
+
+People can create read-only links to a summary of their search (Settings, Share your progress). Only a SHA-256 hash of the secret is stored. The public page `/share/<secret>` reads through the `get_shared_progress` database function, which returns company, role, stage and dates (and optionally upcoming interview dates), never notes, salary, contacts or documents. Links expire after 7 to 90 days and can be turned off at any time. If a link leaks, the owner turns it off; there is nothing to rotate on the server.
 
 ## Incident checklist
 

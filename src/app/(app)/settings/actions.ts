@@ -7,6 +7,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { firstError, formToObject, type ActionState } from "@/lib/forms";
 import { enabledProviders, providerById } from "@/lib/auth-providers";
+import { sweepOrphans } from "@/lib/storage-sweep";
 
 const profileSchema = z.object({
   display_name: z.string().trim().max(100).transform((v) => (v === "" ? null : v)),
@@ -107,4 +108,14 @@ export async function disconnectProvider(identityId: string) {
   await supabase.from("audit_events").insert({ action: "sign_in_method_removed", data: { provider: identity.provider } });
   revalidatePath("/settings");
   redirect("/settings?link=removed");
+}
+
+/** Removes uploaded files that never became a saved version (an upload that was interrupted, for example). */
+export async function cleanUpUploads() {
+  const supabase = await createClient();
+  const { data: auth } = await supabase.auth.getUser();
+  if (!auth.user) redirect("/login");
+  const { removed } = await sweepOrphans(supabase, auth.user.id);
+  if (removed > 0) await supabase.from("audit_events").insert({ action: "orphan_uploads_removed", data: { count: removed } });
+  revalidatePath("/settings");
 }

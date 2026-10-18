@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ShieldCheck } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { CommandPalette } from "@/components/app/command-palette";
 import { Logo } from "@/components/app/logo";
@@ -12,6 +14,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) redirect("/login");
+  const { data: isAdmin } = await supabase.rpc("is_admin");
 
   return (
     <div className="flex min-h-screen">
@@ -24,6 +27,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <aside className="hidden w-60 shrink-0 border-r bg-sidebar p-4 md:block">
         <Logo href="/dashboard" className="mb-6 px-3 text-lg" />
         <NavLinks />
+        {isAdmin === true ? (
+          <Link href="/admin" className="mt-1 flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+            <ShieldCheck className="size-4" aria-hidden="true" />
+            Admin
+          </Link>
+        ) : null}
         <SiteFooter className="mt-8 px-3" />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">

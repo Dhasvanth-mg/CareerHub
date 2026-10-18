@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { sweepOrphans } from "@/lib/storage-sweep";
 import {
   DOC_KINDS,
   MAX_FILE_BYTES,
@@ -114,6 +115,13 @@ export async function finalizeUpload(input: z.input<typeof finalizeSchema>): Pro
     await cleanup();
     if (!v.documentId) await supabase.from("documents").delete().eq("id", documentId as string);
     return { error: dbMessage(versionError, "Couldn't save the file details. Please try again.") };
+  }
+
+  // Tidy up after earlier interrupted uploads. Best effort: it must never fail this save.
+  try {
+    await sweepOrphans(supabase, uid);
+  } catch {
+    // ignored on purpose
   }
 
   revalidatePath("/documents");

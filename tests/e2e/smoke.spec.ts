@@ -145,6 +145,19 @@ test.describe("hardening", () => {
     await expect(page).toHaveURL(/\/login/);
   });
 
+  test("an unknown share link shows a neutral page without needing a login", async ({ page }) => {
+    const res = await page.goto("/share/this-is-not-a-real-share-token-0000");
+    expect(res?.status()).toBe(200);
+    await expect(page.getByRole("heading", { name: "This link isn't available" })).toBeVisible();
+    expect(res?.headers()["referrer-policy"]).toBe("no-referrer");
+    expect(res?.headers()["x-robots-tag"]).toContain("noindex");
+  });
+
+  test("the admin page is not reachable signed out", async ({ page }) => {
+    await page.goto("/admin");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
   test("privacy and terms pages are public", async ({ page }) => {
     for (const path of ["/privacy", "/terms"]) {
       const res = await page.goto(path);

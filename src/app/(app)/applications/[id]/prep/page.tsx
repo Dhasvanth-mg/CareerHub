@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
 import { AiGate } from "@/components/app/ai-gate";
 import { LocalTime } from "@/components/app/local-time";
 import { PrepGenerateForm, PrepItemCard, type PrepItem } from "@/components/app/prep-ui";
@@ -108,6 +109,15 @@ export default async function PrepPage({ params, searchParams }: PageProps<"/app
           />
         </AiGate>
       </section>
+
+      {items && items.length > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3">
+          <p className="text-sm text-muted-foreground">Ready to rehearse? Answer these against a clock.</p>
+          <Button nativeButton={false} variant="outline" render={<Link href={roundId ? `/applications/${id}/prep/practice?round=${roundId}` : `/applications/${id}/prep/practice`} />}>
+            Start timed practice
+          </Button>
+        </div>
+      ) : null}
 
       {items && items.length > 0 ? (
         <ul className="space-y-4">
