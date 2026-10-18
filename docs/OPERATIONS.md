@@ -31,6 +31,7 @@ How to run, change and recover CareerHub AI in production.
 | Groq API key | console.groq.com, then update `GROQ_API_KEY` in Vercel (production) and redeploy. |
 | Supabase database password | Supabase dashboard, Project Settings, Database. |
 | Supabase access tokens | supabase.com/dashboard/account/tokens. Revoke any token after using it. |
+| Brevo SMTP key | Brevo, SMTP & API, SMTP. Generate a new key, then update it in Supabase SMTP Settings and delete the old key. |
 | Vercel tokens | Vercel account settings. |
 
 Never paste secrets into chats or commit them. `.env*` files are git-ignored.
@@ -44,7 +45,7 @@ Never paste secrets into chats or commit them. `.env*` files are git-ignored.
 
 ## Known gaps and decisions
 
-- **Email confirmation is off.** Anyone can sign up with an address they do not own. Turning it on needs SMTP: run `scripts/apply-auth-config.mjs` with SMTP settings and a Supabase access token, then set `NEXT_PUBLIC_EMAIL_FLOWS=1`. Password reset is hidden until then.
+- **Email confirmation is on**, sent through Brevo's SMTP relay (free plan, 300 emails a day, sender `careerhubsupportemail@gmail.com`). Password reset is on (`NEXT_PUBLIC_EMAIL_FLOWS=1`). The SMTP key lives only in Supabase (Authentication, Emails, SMTP Settings); to change the sender or key, run `scripts/apply-auth-config.mjs` or edit it there. If emails stop arriving, check Brevo, Transactional, Logs first, then the daily limit.
 - **Social sign-in (GitHub, Google, LinkedIn) is built but off** until each provider is configured. Follow `docs/SOCIAL_SIGNIN.md`; no email sending is needed.
 - **Files uploaded but never saved** (an interrupted upload) are removed automatically the next time that person saves an upload, and from Settings, Storage. Files younger than two hours are never touched.
 - **No point-in-time database backups** on the free Supabase plan. Users can export their own data; consider a scheduled export or a paid plan before relying on it.
