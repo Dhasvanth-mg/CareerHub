@@ -2,9 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { firstError, formToObject, type ActionState } from "@/lib/forms";
+import { enabledProviders, providerById } from "@/lib/auth-providers";
 
 const profileSchema = z.object({
   display_name: z.string().trim().max(100).transform((v) => (v === "" ? null : v)),
@@ -75,4 +77,34 @@ export async function deleteAccount(_prev: ActionState, formData: FormData): Pro
 
   await supabase.auth.signOut();
   redirect("/login?deleted=1");
+}
+
+/** Adds another sign-in method to the signed-in account, even if that service uses a different email address. */
+export async function connectProvider(providerId: string) {
+  const provider = providerById(providerId);
+  if (!provider || !enabledProviders().some((p) => p.id === provider.id)) redirect("/settings?link=failed");
+
+  const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.linkIdentity({
+    provider: provider.supabase,
+    options: { redirectTo: `${origin}/auth/callback?next=/settings%3Flink%3Dadded` },
+  });
+  if (error || !data.url) redirect(error?.code === "manual_linking_disabled" ? "/settings?link=disabled" : "/settings?link=failed");
+  redirect(data.url);
+}
+
+/** Removes one sign-in method. The last one can never be removed, or the account would be unreachable. */
+export async function disconnectProvider(identityId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUserIdentities();
+  if (error || !data) redirect("/settings?link=failed");
+  if (data.identities.length < 2) redirect("/settings?link=last");
+  const identity = data.identities.find((i) => i.identity_id === identityId);
+  if (!identity) redirect("/settings?link=failed");
+  const { error: unlinkError } = await supabase.auth.unlinkIdentity(identity);
+  if (unlinkError) redirect("/settings?link=failed");
+  await supabase.from("audit_events").insert({ action: "sign_in_method_removed", data: { provider: identity.provider } });
+  revalidatePath("/settings");
+  redirect("/settings?link=removed");
 }

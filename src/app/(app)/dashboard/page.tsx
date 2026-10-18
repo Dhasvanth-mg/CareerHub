@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { BriefcaseBusiness, CheckSquare, ScanSearch, UserPlus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,8 @@ import { DeadlineBadge } from "@/components/app/stage-badge";
 import { LocalTime } from "@/components/app/local-time";
 import { STAGES, STAGE_LABEL, daysUntil, nowMs, type Stage } from "@/lib/domain";
 import { loadActionCenter } from "@/lib/actions-loader";
+import { OnboardingChecklist, type OnboardingStep } from "@/components/app/onboarding-checklist";
+import { ONBOARDING_COOKIE } from "@/lib/onboarding";
 
 export const metadata = { title: "Dashboard | CareerHub AI" };
 
@@ -25,7 +28,10 @@ export default async function DashboardPage() {
   const now = nowMs();
   const horizon = new Date(now + 7 * 86_400_000).toISOString();
 
-  const [appsRes, tasksRes, referralsRes, eventsRes] = await Promise.all([
+  const hidden = (await cookies()).get(ONBOARDING_COOKIE)?.value === "1";
+  const any = (table: "documents" | "tasks" | "contacts") =>
+    supabase.from(table).select("id", { count: "exact", head: true }).limit(1);
+  const [appsRes, tasksRes, referralsRes, eventsRes, hasResume, hasTask, hasContact, profileRes] = await Promise.all([
     supabase.from("applications").select("id, company_name, title, stage, deadline").is("archived_at", null).limit(1000),
     supabase
       .from("tasks")
@@ -41,6 +47,10 @@ export default async function DashboardPage() {
       .select("id, summary, created_at, application_id, applications(title, company_name)")
       .order("created_at", { ascending: false })
       .limit(8),
+    supabase.from("documents").select("id", { count: "exact", head: true }).eq("kind", "resume"),
+    any("tasks"),
+    any("contacts"),
+    supabase.from("profiles").select("ai_notice_accepted_at").maybeSingle(),
   ]);
 
   const attention = await loadActionCenter(supabase, new Date(now));
@@ -69,6 +79,15 @@ export default async function DashboardPage() {
   ];
   const maxStage = Math.max(1, ...STAGES.map((s) => byStage.get(s) ?? 0));
 
+  const steps: OnboardingStep[] = [
+    { key: "app", label: "Add your first application", hint: "Add one by hand, import a CSV, or paste a posting.", href: "/applications/new", done: apps.length > 0 },
+    { key: "resume", label: "Upload your resume", hint: "Keep versions and see which one you sent where.", href: "/documents", done: (hasResume.count ?? 0) > 0 },
+    { key: "ai", label: "Turn on AI features", hint: "Job Capture, Resume Studio and next steps. You can turn them off any time.", href: "/settings", done: Boolean(profileRes.data?.ai_notice_accepted_at) },
+    { key: "task", label: "Add a task or deadline", hint: "A follow-up or a due date shows up on your calendar.", href: "/tasks", done: (hasTask.count ?? 0) > 0 },
+    { key: "contact", label: "Add a contact", hint: "Recruiters, alumni and referrals, linked to applications.", href: "/contacts/new", done: (hasContact.count ?? 0) > 0 },
+  ];
+  const showOnboarding = !hidden && !loadFailed && steps.some((s) => !s.done);
+
   return (
     <div className="max-w-5xl space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -94,6 +113,8 @@ export default async function DashboardPage() {
           Some dashboard data couldn&apos;t be loaded. Refresh to try again.
         </p>
       ) : null}
+
+      {showOnboarding ? <OnboardingChecklist steps={steps} /> : null}
 
       {apps.length === 0 && !loadFailed ? (
         <div className="rounded-lg border border-dashed p-8">

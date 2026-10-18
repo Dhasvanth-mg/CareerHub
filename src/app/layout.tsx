@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/app/theme";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,15 +23,18 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   // Reading the request headers makes every page render per request, which the per-request CSP nonce requires.
-  await headers();
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        {children}
-        <Toaster />
+        <ThemeProvider nonce={nonce}>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

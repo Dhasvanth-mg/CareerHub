@@ -63,9 +63,14 @@ export default async function ApplicationsPage({ searchParams }: PageProps<"/app
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight">{archived ? "Archived applications" : "Applications"}</h1>
-        <Button nativeButton={false} render={<Link href="/applications/new" />}>
-          <Plus aria-hidden="true" /> Add application
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button nativeButton={false} variant="outline" render={<Link href="/applications/import" />}>
+            Import CSV
+          </Button>
+          <Button nativeButton={false} render={<Link href="/applications/new" />}>
+            <Plus aria-hidden="true" /> Add application
+          </Button>
+        </div>
       </div>
 
       <form method="get" className="flex flex-wrap items-end gap-2" role="search">

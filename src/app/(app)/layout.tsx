@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { CommandPalette } from "@/components/app/command-palette";
 import { Logo } from "@/components/app/logo";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { SiteFooter } from "@/components/app/site-footer";
 import { NavLinks } from "@/components/app/nav-links";
+import { ThemeToggle } from "@/components/app/theme";
 import { UserMenu } from "@/components/app/user-menu";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -27,7 +29,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b px-4">
           <MobileNav />
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-1">
+            <CommandPalette />
+            <ThemeToggle />
             <UserMenu email={data.user.email ?? "Account"} />
           </div>
         </header>

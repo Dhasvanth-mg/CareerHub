@@ -3,13 +3,17 @@ import { Download } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { AiNoticeText } from "@/components/app/ai-gate";
 import { DeleteAccountForm, ProfileForm } from "@/components/app/settings-forms";
+import { SignInMethods } from "@/components/app/sign-in-methods";
+import { ThemeChooser } from "@/components/app/theme";
 import { LocalTime } from "@/components/app/local-time";
 import { Button } from "@/components/ui/button";
 import { acceptAiNotice, revokeAiNotice } from "./actions";
 
 export const metadata = { title: "Settings | CareerHub AI" };
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }: PageProps<"/settings">) {
+  const sp = await searchParams;
+  const link = Array.isArray(sp.link) ? sp.link[0] : sp.link;
   const supabase = await createClient();
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect("/login");
@@ -19,6 +23,8 @@ export default async function SettingsPage() {
     .eq("id", auth.user.id)
     .maybeSingle();
   const aiOn = Boolean(profile?.ai_notice_accepted_at);
+  const { data: identityData } = await supabase.auth.getUserIdentities();
+  const identities = identityData?.identities ?? [];
 
   return (
     <div className="max-w-3xl space-y-10">
@@ -30,6 +36,16 @@ export default async function SettingsPage() {
         </h2>
         <p className="text-sm text-muted-foreground">Signed in as {auth.user.email}.</p>
         <ProfileForm displayName={profile?.display_name ?? ""} />
+      </section>
+
+      <SignInMethods identities={identities} notice={link} />
+
+      <section aria-labelledby="appearance" className="space-y-3">
+        <h2 id="appearance" className="text-lg font-medium">
+          Appearance
+        </h2>
+        <p className="text-sm text-muted-foreground">System follows your device setting. The choice is remembered on this browser.</p>
+        <ThemeChooser />
       </section>
 
       <section aria-labelledby="ai" className="space-y-3">
