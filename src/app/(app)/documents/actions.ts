@@ -14,7 +14,7 @@ import {
   safeFileName,
 } from "@/lib/documents";
 import { logEvent } from "@/lib/events";
-import { firstError, type ActionState } from "@/lib/forms";
+import { dbMessage, firstError, type ActionState } from "@/lib/forms";
 
 type FinalizeResult = { error?: string; documentId?: string; extraction?: "ok" | "empty" | "failed" } | undefined;
 
@@ -94,7 +94,7 @@ export async function finalizeUpload(input: z.input<typeof finalizeSchema>): Pro
     const { data: doc, error } = await supabase.from("documents").insert({ kind: v.kind, title: v.title }).select("id").single();
     if (error || !doc) {
       await cleanup();
-      return { error: "Couldn't save the document. Please try again." };
+      return { error: dbMessage(error, "Couldn't save the document. Please try again.") };
     }
     documentId = doc.id;
   }
@@ -113,7 +113,7 @@ export async function finalizeUpload(input: z.input<typeof finalizeSchema>): Pro
   if (versionError) {
     await cleanup();
     if (!v.documentId) await supabase.from("documents").delete().eq("id", documentId as string);
-    return { error: "Couldn't save the file details. Please try again." };
+    return { error: dbMessage(versionError, "Couldn't save the file details. Please try again.") };
   }
 
   revalidatePath("/documents");
@@ -172,7 +172,7 @@ export async function saveTextVersion(input: z.input<typeof textSchema>): Promis
   if (error) {
     await supabase.storage.from("documents").remove([path]);
     if (createdDoc) await supabase.from("documents").delete().eq("id", documentId as string);
-    return { error: "Couldn't save the version. Please try again." };
+    return { error: dbMessage(error, "Couldn't save the version. Please try again.") };
   }
   revalidatePath("/documents");
   revalidatePath(`/documents/${documentId}`);

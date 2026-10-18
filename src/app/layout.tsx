@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
@@ -18,7 +19,9 @@ export const metadata: Metadata = {
   description: "AI-assisted career management workspace for students and early-career professionals.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Reading the request headers makes every page render per request, which the per-request CSP nonce requires.
+  await headers();
   return (
     <html
       lang="en"

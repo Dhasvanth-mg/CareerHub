@@ -29,3 +29,13 @@ export function firstError(error: z.ZodError): string {
   const i = error.issues[0];
   return i.path.length ? `${String(i.path[0]).replace(/_/g, " ")}: ${i.message}` : i.message;
 }
+
+/** Row and storage caps are enforced by the database (SQLSTATE 54000). Say so plainly. */
+export function dbMessage(error: { code?: string; message?: string } | null | undefined, fallback: string): string {
+  if (error?.code === "54000") {
+    return /storage/i.test(error.message ?? "")
+      ? "You've reached the 100 MB document limit for this account. Delete some files first."
+      : "You've reached the limit for this account. Delete some old items first.";
+  }
+  return fallback;
+}

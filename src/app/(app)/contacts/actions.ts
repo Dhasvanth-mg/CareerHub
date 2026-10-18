@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/events";
-import { firstError, formToObject, optDate, optText, type ActionState } from "@/lib/forms";
+import { dbMessage, firstError, formToObject, optDate, optText, type ActionState } from "@/lib/forms";
 import { CONTACT_ROLES, CONTACT_ROLE_LABEL, REFERRAL_LABEL, REFERRAL_STATUSES } from "@/lib/domain";
 
 const contactSchema = z.object({
@@ -26,7 +26,7 @@ export async function createContact(_prev: ActionState, formData: FormData): Pro
 
   const supabase = await createClient();
   const { data, error } = await supabase.from("contacts").insert(parsed.data).select("id").single();
-  if (error || !data) return { error: "Could not save the contact. Please try again." };
+  if (error || !data) return { error: dbMessage(error, "Could not save the contact. Please try again.") };
   revalidatePath("/contacts");
   redirect(`/contacts/${data.id}`);
 }

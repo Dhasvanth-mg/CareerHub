@@ -65,7 +65,7 @@ const agent = new Agent({
   },
 });
 
-function validateUrl(raw: string): URL {
+export function validateUrl(raw: string): URL {
   let url: URL;
   try {
     url = new URL(raw);

@@ -5,6 +5,7 @@ import { cookies, headers } from "next/headers";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { safeNext } from "@/lib/safe-redirect";
+import { TOO_MANY, clientAddress, withinLimit } from "@/lib/rate-limit";
 
 export type AuthState = { error?: string; message?: string } | undefined;
 
@@ -39,6 +40,13 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
   const supabase = await createClient();
+  const ip = await clientAddress();
+  if (
+    !(await withinLimit(supabase, "login", "ip", ip, 60, 900)) ||
+    !(await withinLimit(supabase, "login", "email", parsed.data.email, 10, 900))
+  ) {
+    return { error: TOO_MANY };
+  }
   const { error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) {
     if (error.code === "email_not_confirmed") {
@@ -57,8 +65,18 @@ export async function signup(_prev: AuthState, formData: FormData): Promise<Auth
   });
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
+  // Bots fill every field, including the hidden one. Look like a success and do nothing.
+  if (String(formData.get("company_website") ?? "").trim() !== "") redirect("/check-email");
+
   const origin = await siteOrigin();
   const supabase = await createClient();
+  const ip = await clientAddress();
+  if (
+    !(await withinLimit(supabase, "signup", "ip", ip, 8, 3600)) ||
+    !(await withinLimit(supabase, "signup", "email", parsed.data.email, 3, 3600))
+  ) {
+    return { error: TOO_MANY };
+  }
   const { data, error } = await supabase.auth.signUp({
     ...parsed.data,
     options: { emailRedirectTo: `${origin}/auth/callback` },
@@ -81,6 +99,12 @@ export async function requestPasswordReset(_prev: AuthState, formData: FormData)
 
   const origin = await siteOrigin();
   const supabase = await createClient();
+  if (
+    !(await withinLimit(supabase, "reset", "ip", await clientAddress(), 8, 3600)) ||
+    !(await withinLimit(supabase, "reset", "email", parsed.data.email, 3, 3600))
+  ) {
+    return { error: TOO_MANY };
+  }
   await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${origin}/auth/callback?next=/reset-password`,
   });
@@ -123,6 +147,7 @@ export async function resendConfirmation(): Promise<AuthState> {
 
   const origin = await siteOrigin();
   const supabase = await createClient();
+  if (!(await withinLimit(supabase, "resend", "email", email, 3, 3600))) return { error: TOO_MANY };
   const { error } = await supabase.auth.resend({
     type: "signup",
     email,

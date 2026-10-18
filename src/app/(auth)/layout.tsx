@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteFooter } from "@/components/app/site-footer";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         CareerHub AI
       </Link>
       <div className="w-full max-w-sm">{children}</div>
+      <SiteFooter className="mt-10" />
     </main>
   );
 }

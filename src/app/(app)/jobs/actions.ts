@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/events";
-import { firstError, formToObject, optDate, optText } from "@/lib/forms";
+import { dbMessage, firstError, formToObject, optDate, optText } from "@/lib/forms";
 import { WORK_MODES } from "@/lib/domain";
 import { AiUnavailableError } from "@/lib/ai/groq";
 import { checkAiAllowed } from "@/lib/ai/guard";
@@ -94,7 +94,7 @@ export async function extractJob(_prev: ExtractState, formData: FormData): Promi
     })
     .select("id")
     .single();
-  if (error || !posting) return { error: "Couldn't save the posting. Please try again." };
+  if (error || !posting) return { error: dbMessage(error, "Couldn't save the posting. Please try again.") };
 
   return {
     postingId: posting.id,

@@ -106,7 +106,7 @@ export function emptyExtraction(): JobExtraction {
 }
 
 /** The model is not trusted: drop quotes and values that can't be found in the posting itself. */
-function ground(raw: JobExtraction, text: string): JobExtraction {
+export function ground(raw: JobExtraction, text: string): JobExtraction {
   const haystack = normalize(text);
   const uncertain = new Set(raw.uncertain_fields);
 

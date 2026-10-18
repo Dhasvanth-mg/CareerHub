@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/events";
-import { firstError, formToObject, optDate, optText, type ActionState } from "@/lib/forms";
+import { dbMessage, firstError, formToObject, optDate, optText, type ActionState } from "@/lib/forms";
 import { PRIORITIES, STAGES, STAGE_LABEL, WORK_MODES, type Stage } from "@/lib/domain";
 
 const applicationSchema = z.object({
@@ -38,7 +38,7 @@ export async function createApplication(_prev: ActionState, formData: FormData):
 
   const supabase = await createClient();
   const { data, error } = await supabase.from("applications").insert(values).select("id").single();
-  if (error || !data) return { error: "Could not save the application. Please try again." };
+  if (error || !data) return { error: dbMessage(error, "Could not save the application. Please try again.") };
 
   await logEvent(supabase, data.id, "created", `Added ${values.title} at ${values.company_name}`, {
     to: values.stage,

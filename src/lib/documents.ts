@@ -26,20 +26,39 @@ export function looksLikeText(bytes: Uint8Array): boolean {
   return !bytes.slice(0, 4096).includes(0);
 }
 
+const MAX_PDF_PAGES = 80;
+const PDF_TIMEOUT_MS = 20_000;
+
 export async function extractPdfText(bytes: Uint8Array): Promise<{ text: string; state: ExtractionState; pages: number }> {
+  const failed = { text: "", state: "failed" as const, pages: 0 };
+  let timer: ReturnType<typeof setTimeout> | undefined;
+
+  const work = (async () => {
+    try {
+      const pdf = await getDocumentProxy(new Uint8Array(bytes));
+      // A hostile or enormous file shouldn't be able to tie up a server function.
+      if (pdf.numPages > MAX_PDF_PAGES) return { ...failed, pages: pdf.numPages };
+      const { text, totalPages } = await extractText(pdf, { mergePages: true });
+      const clean = (Array.isArray(text) ? text.join("\n") : text)
+        .replace(/\u0000/g, "")
+        .replace(/[ \t]+\n/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
+        .trim()
+        .slice(0, MAX_TEXT_CHARS);
+      // Scanned/image-only PDFs yield (almost) nothing. Tell the user instead of analysing noise.
+      return { text: clean, state: (clean.length < 50 ? "empty" : "ok") as ExtractionState, pages: totalPages };
+    } catch {
+      return failed;
+    }
+  })();
+  const timeout = new Promise<typeof failed>((resolve) => {
+    timer = setTimeout(() => resolve(failed), PDF_TIMEOUT_MS);
+  });
+
   try {
-    const pdf = await getDocumentProxy(new Uint8Array(bytes));
-    const { text, totalPages } = await extractText(pdf, { mergePages: true });
-    const clean = (Array.isArray(text) ? text.join("\n") : text)
-      .replace(/\u0000/g, "")
-      .replace(/[ \t]+\n/g, "\n")
-      .replace(/\n{3,}/g, "\n\n")
-      .trim()
-      .slice(0, MAX_TEXT_CHARS);
-    // Scanned/image-only PDFs yield (almost) nothing. Tell the user instead of analysing noise.
-    return { text: clean, state: clean.length < 50 ? "empty" : "ok", pages: totalPages };
-  } catch {
-    return { text: "", state: "failed", pages: 0 };
+    return await Promise.race([work, timeout]);
+  } finally {
+    clearTimeout(timer);
   }
 }
 

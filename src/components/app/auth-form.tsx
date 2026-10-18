@@ -42,6 +42,15 @@ export function AuthForm({ mode, action, googleAction, next, initialError, notic
 
       <form onSubmit={onSubmit} className="space-y-4" noValidate>
         {next ? <input type="hidden" name="next" value={next} /> : null}
+        {!isLogin ? (
+          // Honeypot: invisible to people, tempting to bots. A filled value means the signup is ignored.
+          <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+            <label>
+              Leave this field empty
+              <input type="text" name="company_website" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
+        ) : null}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" name="email" type="email" autoComplete="email" required />

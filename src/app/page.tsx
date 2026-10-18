@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteFooter } from "@/components/app/site-footer";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
           Log in
         </Button>
       </div>
+      <SiteFooter className="mt-8" />
     </main>
   );
 }

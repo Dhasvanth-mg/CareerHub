@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { MobileNav } from "@/components/app/mobile-nav";
+import { SiteFooter } from "@/components/app/site-footer";
 import { NavLinks } from "@/components/app/nav-links";
 import { UserMenu } from "@/components/app/user-menu";
 
@@ -12,11 +13,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen">
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:shadow"
+      >
+        Skip to main content
+      </a>
       <aside className="hidden w-60 shrink-0 border-r bg-sidebar p-4 md:block">
         <Link href="/dashboard" className="mb-6 block px-3 text-lg font-semibold tracking-tight">
           CareerHub AI
         </Link>
         <NavLinks />
+        <SiteFooter className="mt-8 px-3" />
       </aside>
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-14 items-center justify-between border-b px-4">

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/events";
-import { firstError, formToObject, optText, type ActionState } from "@/lib/forms";
+import { dbMessage, firstError, formToObject, optText, type ActionState } from "@/lib/forms";
 
 const taskSchema = z.object({
   title: z.string().trim().min(1, "Give the task a title.").max(300),
@@ -36,7 +36,7 @@ export async function createTask(_prev: ActionState, formData: FormData): Promis
 
   const supabase = await createClient();
   const { error } = await supabase.from("tasks").insert(parsed.data);
-  if (error) return { error: "Could not save the task. Check the linked application and try again." };
+  if (error) return { error: dbMessage(error, "Could not save the task. Check the linked application and try again.") };
 
   if (parsed.data.application_id) {
     await logEvent(supabase, parsed.data.application_id, "task_added", `Added task: ${parsed.data.title}`);
