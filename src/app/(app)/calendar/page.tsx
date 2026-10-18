@@ -129,6 +129,9 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
           <Link href={`/calendar?m=${today}`} className="rounded-md px-3 py-1 text-muted-foreground underline underline-offset-4">
             Today
           </Link>
+          <Link href="/calendar/sync" className="rounded-md border px-3 py-1 hover:bg-muted">
+            Import / export
+          </Link>
         </nav>
       </div>
 

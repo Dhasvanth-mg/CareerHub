@@ -131,6 +131,20 @@ test.describe("hardening", () => {
     expect(await res.json()).toHaveProperty("status");
   });
 
+  test("calendar export is sent to login when signed out, never served", async ({ request, page }) => {
+    // The proxy redirects signed-out requests before the route runs, so no calendar data can be returned.
+    const get = await request.get("/api/calendar/export", { maxRedirects: 0 });
+    expect([302, 303, 307, 308, 401]).toContain(get.status());
+    expect(get.headers()["content-type"] ?? "").not.toContain("text/calendar");
+    const post = await request.post("/api/calendar/export", {
+      maxRedirects: 0,
+      multipart: { sel: "task:00000000-0000-0000-0000-000000000000" },
+    });
+    expect([302, 303, 307, 308, 401]).toContain(post.status());
+    await page.goto("/calendar/sync");
+    await expect(page).toHaveURL(/\/login/);
+  });
+
   test("privacy and terms pages are public", async ({ page }) => {
     for (const path of ["/privacy", "/terms"]) {
       const res = await page.goto(path);
