@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://careerhub-woad.vercel.app"),
   title: { default: "CareerHub AI", template: "%s" },
   description: "AI-assisted career management workspace for students and early-career professionals.",
 };

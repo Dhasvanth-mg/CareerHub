@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { Logo } from "@/components/app/logo";
 import { MobileNav } from "@/components/app/mobile-nav";
 import { SiteFooter } from "@/components/app/site-footer";
 import { NavLinks } from "@/components/app/nav-links";
@@ -20,9 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         Skip to main content
       </a>
       <aside className="hidden w-60 shrink-0 border-r bg-sidebar p-4 md:block">
-        <Link href="/dashboard" className="mb-6 block px-3 text-lg font-semibold tracking-tight">
-          CareerHub AI
-        </Link>
+        <Logo href="/dashboard" className="mb-6 px-3 text-lg" />
         <NavLinks />
         <SiteFooter className="mt-8 px-3" />
       </aside>

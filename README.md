@@ -1,3 +1,5 @@
+<p align="center"><img src="public/brand/careerhub-logo.svg" alt="CareerHub AI logo" width="96" height="96"></p>
+
 # CareerHub AI
 
 An AI-assisted career workspace for students and early-career professionals. Track every application, capture job postings, get evidence-based feedback on a resume or cover letter, and keep contacts, interviews, tasks and documents in one connected place.
