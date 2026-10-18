@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type ActionState = { error?: string } | undefined;
+export type ActionState = { error?: string; message?: string } | undefined;
 
 /** "" -> null for optional text fields. */
 export const optText = (max = 2000) =>

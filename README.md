@@ -13,19 +13,23 @@ The AI only **suggests**. It cites the parts of your own record or document it r
 
 | Area | What you can do |
 | --- | --- |
-| **Applications** | Kanban board (drag between stages) and sortable table, detail page, append-only timeline, archive and delete. |
+| **Applications** | Kanban board (drag between stages) and sortable table with bulk move, archive and delete, detail page, append-only timeline. |
+| **Action Center** | One list of what needs attention across every application (overdue tasks, close deadlines, interviews to prepare for, debriefs, quiet follow-ups), each with the dates behind it. Add as a task, snooze or dismiss. |
 | **Tasks and calendar** | Tasks with timezone-safe due dates and snooze. A calendar of interviews, task due dates and deadlines, with overlap detection. |
 | **Contacts and referrals** | Contacts linked to applications with a referral status per application. |
-| **Interviews** | Rounds per application with prep notes, questions asked and a debrief. |
+| **Interviews and prep** | Rounds per application with prep notes and a debrief. AI practice questions tied to the job and your real experience, and feedback on your written answers that flags claims you can't back up. |
 | **Job Capture** | Paste a posting or a link. AI extracts the fields and requirements for you to review. Quotes are verified against the posting, uncertain fields are flagged, duplicates are warned about. |
 | **Document Vault** | Versioned PDF and text uploads, text extraction you can correct, signed short-lived downloads, and a record of which exact version you submitted. |
 | **Resume Studio** | Requirement-by-requirement analysis with verified quotes from your resume, an optional transparent guidance score, and edits saved as new versions. |
 | **Cover Letter Studio** | Paragraph-level review, claims checked against your resume, and drafting from your resume facts only. |
-| **Next-step panel** | One suggested next action per application, with the exact record facts it used. Approving adds a task. |
+| **Next step and Copilot** | One suggested next action per application with the exact record facts it used, plus a chat that answers only from that application's record and drafts messages it never sends. |
+| **Evidence library** | Real projects, results and skills in your own words. Resume Studio, Cover Letter Studio and Interview Prep can cite them as proof. |
+| **Offers** | Side-by-side comparison with weights you set. Pay is never estimated or converted between currencies. |
+| **Career planner** | Goals, a ranking of your opportunities by your own ratings and weights (with the reasons), skill gaps from your analyses, and milestones. |
 | **Analytics** | Funnel, response rate, typical wait, and source and resume breakdowns. Unknown outcomes are never counted as rejections. |
 | **Data control** | JSON and CSV export, AI on/off switch, and full account deletion including stored files. |
 
-Not built yet: Interview Prep, the AI Action Center, Copilot chat, the evidence library, bulk actions, offer comparison, the career planner, Google sign-in, calendar and email sync, and the browser extension.
+Not built yet: Google sign-in, Google/Outlook calendar and email sync, the browser extension, and speech-based interview practice.
 
 ## How it is built
 

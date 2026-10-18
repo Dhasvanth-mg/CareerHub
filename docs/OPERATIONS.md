@@ -39,7 +39,7 @@ Never paste secrets into chats or commit them. `.env*` files are git-ignored.
 
 - `AI_USER_HOURLY_LIMIT` (default 30) and `AI_GLOBAL_DAILY_LIMIT` (default 3000) cap AI use. When the global cap is hit, AI features pause for everyone until the rolling 24 hours clear. Raise or lower them in Vercel and redeploy.
 - Sign-in, signup, reset and resend attempts are rate limited per address and per email. A hidden honeypot field on signup quietly ignores bots.
-- The database caps rows per account (applications 2000, contacts 2000, tasks 5000, documents 200, versions 1000, postings 1000, analyses 2000, interviews 1000) and total document storage (100 MB).
+- The database caps rows per account (applications 2000, contacts 2000, tasks 5000, documents 200, versions 1000, postings 1000, analyses 2000, interviews 1000, prep questions 3000, copilot messages 5000, evidence 500, offers 200, milestones 500) and total document storage (100 MB).
 - Uploads are limited to 10 MB, PDF or plain text, and PDFs over 80 pages are refused.
 
 ## Known gaps and decisions

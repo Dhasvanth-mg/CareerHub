@@ -8,6 +8,8 @@ import {
   FileSignature,
   FolderOpen,
   Layers,
+  HandCoins,
+  Compass,
   LayoutDashboard,
   ScanSearch,
   Settings,
@@ -31,5 +33,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/documents", label: "Document Vault", icon: FolderOpen },
   { href: "/evidence", label: "Evidence library", icon: Layers },
   { href: "/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/offers", label: "Offers", icon: HandCoins },
+  { href: "/planner", label: "Career planner", icon: Compass },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

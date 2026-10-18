@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { Board, type BoardCard } from "@/components/app/board";
-import { DeadlineBadge, StageBadge } from "@/components/app/stage-badge";
-import { LocalTime } from "@/components/app/local-time";
+import { ApplicationsTable } from "@/components/app/applications-table";
 import { STAGES, STAGE_LABEL, type Stage } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 
@@ -132,52 +131,32 @@ export default async function ApplicationsPage({ searchParams }: PageProps<"/app
       ) : view === "board" ? (
         <Board apps={apps as BoardCard[]} />
       ) : (
-        <div className="overflow-x-auto rounded-lg border">
-          <table className="w-full text-left text-sm">
-            <caption className="sr-only">Applications</caption>
-            <thead className="border-b bg-muted/40">
-              <tr>
-                {(
-                  [
-                    ["company", "Company"],
-                    ["title", "Role"],
-                    ["stage", "Stage"],
-                    ["deadline", "Deadline"],
-                    ["updated", "Updated"],
-                  ] as const
-                ).map(([key, label]) => (
-                  <th key={key} scope="col" aria-sort={ariaSort(key)} className="px-3 py-2 font-medium">
-                    <Link href={sortLink(key)} className="hover:underline">
-                      {label}
-                      {sort === key ? (dir === "asc" ? " ↑" : " ↓") : ""}
-                    </Link>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {apps.map((a) => (
-                <tr key={a.id} className="hover:bg-muted/30">
-                  <td className="px-3 py-2">{a.company_name}</td>
-                  <td className="px-3 py-2">
-                    <Link href={`/applications/${a.id}`} className="font-medium underline-offset-4 hover:underline">
-                      {a.title}
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2">
-                    <StageBadge stage={a.stage as Stage} />
-                  </td>
-                  <td className="px-3 py-2">
-                    {a.deadline ? <DeadlineBadge date={a.deadline} /> : <span className="text-muted-foreground">—</span>}
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    <LocalTime iso={a.updated_at} dateOnly />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ApplicationsTable
+          archivedView={archived}
+          rows={apps.map((a) => ({
+            id: a.id,
+            company_name: a.company_name,
+            title: a.title,
+            stage: a.stage as Stage,
+            deadline: a.deadline,
+            updated_at: a.updated_at,
+          }))}
+          headers={(
+            [
+              ["company", "Company"],
+              ["title", "Role"],
+              ["stage", "Stage"],
+              ["deadline", "Deadline"],
+              ["updated", "Updated"],
+            ] as const
+          ).map(([key, label]) => ({
+            key,
+            label,
+            href: sortLink(key),
+            aria: ariaSort(key),
+            arrow: sort === key ? (dir === "asc" ? " ↑" : " ↓") : "",
+          }))}
+        />
       )}
     </div>
   );

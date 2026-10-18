@@ -15,6 +15,10 @@ const PROTECTED = [
   "/cover-letter",
   "/documents",
   "/analytics",
+  "/action-center",
+  "/evidence",
+  "/offers",
+  "/planner",
   "/settings",
   "/api/export",
 ];
