@@ -158,3 +158,17 @@ test.describe("forms never put typed values in the address bar", () => {
     });
   }
 });
+
+test.describe("social sign-in", () => {
+  // These run when the build was made with NEXT_PUBLIC_OAUTH_PROVIDERS set (CI does this).
+  test.skip(!process.env.NEXT_PUBLIC_OAUTH_PROVIDERS, "no providers enabled in this build");
+
+  for (const path of ["/login", "/signup"]) {
+    test(`${path} offers each enabled provider as a button`, async ({ page }) => {
+      await page.goto(path);
+      for (const name of (process.env.NEXT_PUBLIC_OAUTH_PROVIDERS ?? "").split(",").map((s) => s.trim()).filter(Boolean)) {
+        await expect(page.getByRole("button", { name: new RegExp(`Continue with ${name}`, "i") })).toBeVisible();
+      }
+    });
+  }
+});

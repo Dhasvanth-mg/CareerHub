@@ -4,21 +4,22 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { AuthState } from "@/app/auth/actions";
+import { signInWithProvider, type AuthState } from "@/app/auth/actions";
 import { EMAIL_FLOWS_ENABLED } from "@/lib/flags";
 import { useSafeForm } from "@/lib/use-safe-form";
 
 type Props = {
   mode: "login" | "signup";
   action: (prev: AuthState, formData: FormData) => Promise<AuthState>;
-  googleAction?: () => Promise<void>;
+  /** Social sign-in providers that are switched on. */
+  providers?: { id: string; label: string }[];
   next?: string;
   initialError?: string;
   /** Neutral, non-error message shown above the form (for example after deleting an account). */
   notice?: string;
 };
 
-export function AuthForm({ mode, action, googleAction, next, initialError, notice }: Props) {
+export function AuthForm({ mode, action, providers = [], next, initialError, notice }: Props) {
   const { state, onSubmit, pending } = useSafeForm(action);
   const isLogin = mode === "login";
   const error = state?.error ?? initialError;
@@ -38,6 +39,24 @@ export function AuthForm({ mode, action, googleAction, next, initialError, notic
         <p role="status" className="rounded-md border p-3 text-sm text-muted-foreground">
           {notice}
         </p>
+      ) : null}
+
+      {providers.length > 0 ? (
+        <div className="space-y-2">
+          {providers.map((p) => (
+            // A plain server-action form: works without JavaScript and never puts anything in the URL.
+            <form key={p.id} action={signInWithProvider.bind(null, p.id)}>
+              <Button type="submit" variant="outline" className="w-full">
+                Continue with {p.label}
+              </Button>
+            </form>
+          ))}
+          <div className="flex items-center gap-3 pt-2 text-xs text-muted-foreground" aria-hidden="true">
+            <span className="h-px flex-1 bg-border" />
+            or use email
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </div>
       ) : null}
 
       <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
@@ -81,14 +100,6 @@ export function AuthForm({ mode, action, googleAction, next, initialError, notic
           {pending ? "Please wait…" : isLogin ? "Log in" : "Sign up"}
         </Button>
       </form>
-
-      {googleAction ? (
-        <form action={googleAction}>
-          <Button type="submit" variant="outline" className="w-full">
-            Continue with Google
-          </Button>
-        </form>
-      ) : null}
 
       <p className="text-center text-sm text-muted-foreground">
         {isLogin ? "New to CareerHub?" : "Already have an account?"}{" "}

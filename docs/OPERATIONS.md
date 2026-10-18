@@ -45,7 +45,7 @@ Never paste secrets into chats or commit them. `.env*` files are git-ignored.
 ## Known gaps and decisions
 
 - **Email confirmation is off.** Anyone can sign up with an address they do not own. Turning it on needs SMTP: run `scripts/apply-auth-config.mjs` with SMTP settings and a Supabase access token, then set `NEXT_PUBLIC_EMAIL_FLOWS=1`. Password reset is hidden until then.
-- **Google sign-in is off** until OAuth credentials are configured.
+- **Social sign-in (GitHub, Google, LinkedIn) is built but off** until each provider is configured. Follow `docs/SOCIAL_SIGNIN.md`; no email sending is needed.
 - **Files uploaded but never saved** (an upload that fails after the file reaches storage) are not swept automatically yet.
 - **No point-in-time database backups** on the free Supabase plan. Users can export their own data; consider a scheduled export or a paid plan before relying on it.
 

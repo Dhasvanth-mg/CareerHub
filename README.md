@@ -29,7 +29,7 @@ The AI only **suggests**. It cites the parts of your own record or document it r
 | **Analytics** | Funnel, response rate, typical wait, and source and resume breakdowns. Unknown outcomes are never counted as rejections. |
 | **Data control** | JSON and CSV export, AI on/off switch, and full account deletion including stored files. |
 
-Not built yet: Google sign-in, Google/Outlook calendar and email sync, the browser extension, and speech-based interview practice.
+Not built yet: Google/Outlook calendar and email sync, the browser extension, and speech-based interview practice.
 
 ## How it is built
 
@@ -71,6 +71,7 @@ Open <http://localhost:3000>. Email confirmation is off by default and AI featur
 | `GROQ_API_KEY` | Server only. Never put it in a `NEXT_PUBLIC_*` variable. |
 | `GROQ_MODEL` | Optional. Defaults to `openai/gpt-oss-120b`, which supports strict JSON-schema output. |
 | `AI_USER_HOURLY_LIMIT`, `AI_GLOBAL_DAILY_LIMIT` | Optional AI budgets (defaults 30 per user per hour, 3000 per day overall). |
+| `NEXT_PUBLIC_OAUTH_PROVIDERS` | Comma list of social sign-in buttons to show, once each is configured: `github`, `google`, `linkedin`. See [docs/SOCIAL_SIGNIN.md](docs/SOCIAL_SIGNIN.md). |
 | `NEXT_PUBLIC_EMAIL_FLOWS` | Set to `1` once SMTP works, to enable password reset links. |
 | `NEXT_PUBLIC_CONTACT_EMAIL` | Optional contact shown on the privacy page. |
 | `RATE_LIMIT_SALT` | Optional secret salt for hashing addresses used in rate limits. |

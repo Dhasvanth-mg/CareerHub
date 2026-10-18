@@ -15,7 +15,7 @@ function contentSecurityPolicy(nonce: string): string {
     `connect-src 'self' ${supabase}${dev ? " ws: http://localhost:*" : ""}`,
     "object-src 'none'",
     "base-uri 'self'",
-    `form-action 'self' ${supabase} https://accounts.google.com`,
+    `form-action 'self' ${supabase} https://accounts.google.com https://github.com https://www.linkedin.com`,
     "frame-ancestors 'none'",
     ...(dev ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");

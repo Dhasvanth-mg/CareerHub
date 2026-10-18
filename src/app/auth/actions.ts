@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { safeNext } from "@/lib/safe-redirect";
 import { TOO_MANY, clientAddress, withinLimit } from "@/lib/rate-limit";
+import { enabledProviders, providerById } from "@/lib/auth-providers";
 
 export type AuthState = { error?: string; message?: string } | undefined;
 
@@ -160,11 +161,15 @@ export async function resendConfirmation(): Promise<AuthState> {
   return { message: "Sent. It can take a minute to arrive. Check your spam folder too." };
 }
 
-export async function signInWithGoogle() {
+/** Starts social sign-in. Only providers that have been switched on can be used. */
+export async function signInWithProvider(providerId: string) {
+  const provider = providerById(providerId);
+  if (!provider || !enabledProviders().some((p) => p.id === provider.id)) redirect("/login?error=oauth");
+
   const origin = await siteOrigin();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
+    provider: provider.supabase,
     options: { redirectTo: `${origin}/auth/callback` },
   });
   if (error || !data.url) redirect("/login?error=oauth");
