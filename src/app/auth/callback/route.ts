@@ -10,5 +10,6 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(`${origin}${safeNext(searchParams.get("next"))}`);
   }
-  return NextResponse.redirect(`${origin}/login?error=link`);
+  // No code usually means the provider declined or was cancelled; a code that failed to exchange is an expired link.
+  return NextResponse.redirect(`${origin}/login?error=${code ? "link" : "oauth"}`);
 }
