@@ -18,6 +18,7 @@ The AI only **suggests**. It cites the parts of your own record or document it r
 | **Applications** | Kanban board (drag between stages) and sortable table with bulk move, archive and delete, detail page, append-only timeline. |
 | **Action Center** | One list of what needs attention across every application (overdue tasks, close deadlines, interviews to prepare for, debriefs, quiet follow-ups), each with the dates behind it. Add as a task, snooze or dismiss. |
 | **Tasks and calendar** | Tasks with timezone-safe due dates and snooze. A calendar of interviews, task due dates and deadlines, with overlap detection. |
+| **Calendar sync** | Export chosen interviews, tasks and deadlines to an .ics file for Google, Apple or Outlook. Import an .ics file, preview it, tick the events you want and add them as tasks. Time zones are converted and re-importing never duplicates. |
 | **Contacts and referrals** | Contacts linked to applications with a referral status per application. |
 | **Interviews and prep** | Rounds per application with prep notes and a debrief. AI practice questions tied to the job and your real experience, and feedback on your written answers that flags claims you can't back up. |
 | **Job Capture** | Paste a posting or a link. AI extracts the fields and requirements for you to review. Quotes are verified against the posting, uncertain fields are flagged, duplicates are warned about. |
@@ -31,7 +32,7 @@ The AI only **suggests**. It cites the parts of your own record or document it r
 | **Analytics** | Funnel, response rate, typical wait, and source and resume breakdowns. Unknown outcomes are never counted as rejections. |
 | **Data control** | JSON and CSV export, AI on/off switch, and full account deletion including stored files. |
 
-Not built yet: Google/Outlook calendar and email sync, the browser extension, and speech-based interview practice.
+Not built yet: live two-way Google/Outlook calendar and email sync (file import and export work today), the browser extension, and speech-based interview practice.
 
 ## How it is built
 
