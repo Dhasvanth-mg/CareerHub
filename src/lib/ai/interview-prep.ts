@@ -168,7 +168,7 @@ Rules:
 - strengths: up to 3 specific things the answer does well. improvements: up to 4 concrete, actionable changes (for example "add the result: what changed because of what you did"). Phrase them as advice, never as new content to claim.
 - star: whether the answer clearly contains a Situation, a Task, an Action the candidate took, and a Result.
 - Scores are integers 0 to 100: specificity (concrete details rather than generalities), structure (clear, logical order, a sensible length), relevance (answers the actual question).
-- unsupported_claims: statements in the answer that the resume does not support or that contradict it. claim is an exact quote from the answer. Say it can't be verified from the resume rather than calling it false. If no resume is given, return an empty list.
+- unsupported_claims: statements in the answer that the candidate's background does not support or that contradict it. The <resume> block holds their resume and may also include "Evidence library items" they wrote: both count as support. claim is an exact quote from the answer. Say it can't be verified from their resume or evidence rather than calling it false. If nothing is given in <resume>, return an empty list.
 - summary: two plain sentences.
 Return only JSON that matches the schema.`;
 

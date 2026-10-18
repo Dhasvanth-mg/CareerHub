@@ -132,10 +132,18 @@ export async function getFeedback(itemId: string): Promise<ActionState> {
   const allowed = await checkAiAllowed(supabase, "interview_feedback");
   if (!allowed.ok) return { error: allowed.message };
 
+  // Claims are checked against everything the candidate has told us is true: the resume and the evidence library.
   const resume = await resumeSource(supabase, await defaultResumeVersionId(supabase, item.application_id));
+  const evidence = await evidenceSources(supabase);
+  const support = [
+    resume ? resume.text : null,
+    evidence.length ? `Evidence library items:\n${evidence.map((e) => e.text).join("\n")}` : null,
+  ]
+    .filter(Boolean)
+    .join("\n\n");
   let feedback;
   try {
-    feedback = await giveAnswerFeedback({ question: item.question, answer: item.answer_draft, resumeText: resume?.text ?? null });
+    feedback = await giveAnswerFeedback({ question: item.question, answer: item.answer_draft, resumeText: support || null });
   } catch (e) {
     return { error: e instanceof AiUnavailableError ? e.message : "The feedback couldn't be generated." };
   }

@@ -39,3 +39,23 @@ export function dbMessage(error: { code?: string; message?: string } | null | un
   }
   return fallback;
 }
+
+/**
+ * A money amount typed by a person: "70000", "70,000", "$70 000" and "£70_000" all work. Anything that
+ * isn't a number gets a plain-language message instead of a parser error.
+ */
+export const moneyInput = (what = "amount") =>
+  z
+    .string()
+    .trim()
+    .transform((v, ctx) => {
+      if (v === "") return null;
+      const n = Number(v.replace(/[\s,_$€£¥]/g, ""));
+      if (!Number.isFinite(n)) {
+        ctx.addIssue({ code: "custom", message: `Enter the ${what} as a number, like 60000.` });
+        return z.NEVER;
+      }
+      return n;
+    })
+    .pipe(z.number().min(0, "Amounts can't be negative.").max(1_000_000_000, "That amount is too large.").nullable())
+    .default(null);

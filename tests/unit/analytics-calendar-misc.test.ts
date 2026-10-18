@@ -6,7 +6,7 @@ import { daysUntil, deadlineLabel } from "@/lib/domain";
 import { htmlToText, extractJobPostingJsonLd, pageToText } from "@/lib/ai/html-text";
 import { looksLikePdf, looksLikeText, readabilityScore, safeFileName } from "@/lib/documents";
 import { safeNext } from "@/lib/safe-redirect";
-import { firstError, optDate, optText } from "@/lib/forms";
+import { firstError, moneyInput, optDate, optText } from "@/lib/forms";
 import { z } from "zod";
 
 const t = (d: string) => `2026-10-${d}T12:00:00Z`;
@@ -221,5 +221,27 @@ describe("form helpers", () => {
     const res = z.object({ company_name: z.string().min(1, "Company is required.") }).safeParse({ company_name: "" });
     expect(res.success).toBe(false);
     if (!res.success) expect(firstError(res.error)).toBe("company name: Company is required.");
+  });
+});
+
+describe("moneyInput", () => {
+  const parse = (v: string) => z.object({ m: moneyInput("pay") }).safeParse({ m: v });
+  it("accepts the ways people actually write money", () => {
+    for (const [input, want] of [["70000", 70000], ["70,000", 70000], ["$70 000", 70000], ["£70_000.50", 70000.5], ["", null]] as const) {
+      const r = parse(input);
+      expect(r.success && r.data.m).toBe(want);
+    }
+  });
+  it("explains itself instead of showing a parser error", () => {
+    const r = parse("a lot");
+    expect(r.success).toBe(false);
+    if (!r.success) {
+      expect(r.error.issues[0].message).toBe("Enter the pay as a number, like 60000.");
+      expect(r.error.issues[0].message).not.toMatch(/NaN|Invalid input/);
+    }
+  });
+  it("rejects negative and absurd amounts", () => {
+    expect(parse("-5").success).toBe(false);
+    expect(parse("99999999999").success).toBe(false);
   });
 });

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { dbMessage, firstError, formToObject, optDate, optText, type ActionState } from "@/lib/forms";
+import { dbMessage, firstError, formToObject, moneyInput, optDate, optText, type ActionState } from "@/lib/forms";
 import { RANK_CRITERIA } from "@/lib/planner";
 
 const uuid = z.string().uuid();
@@ -25,12 +25,7 @@ const profileSchema = z.object({
   target_roles: list(20, 80),
   target_industries: list(20, 80),
   target_locations: list(20, 80),
-  min_salary: z
-    .string()
-    .trim()
-    .transform((v) => (v === "" ? null : Number(v.replace(/,/g, ""))))
-    .pipe(z.number().min(0).max(1_000_000_000).nullable())
-    .default(null),
+  min_salary: moneyInput("minimum pay"),
   salary_currency: z.string().trim().toUpperCase().regex(/^[A-Z]{3}$/, "Use a 3-letter currency code.").default("USD"),
   constraints_note: optText(2000),
 });

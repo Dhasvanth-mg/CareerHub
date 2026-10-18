@@ -3,16 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { dbMessage, firstError, formToObject, optDate, optText, type ActionState } from "@/lib/forms";
+import { dbMessage, firstError, formToObject, moneyInput, optDate, optText, type ActionState } from "@/lib/forms";
 import { WORK_MODES } from "@/lib/domain";
 import { ALL_CRITERIA, OFFER_CRITERIA, clampWeight } from "@/lib/offers";
 
-const money = z
-  .string()
-  .trim()
-  .transform((v) => (v === "" ? null : Number(v.replace(/,/g, ""))))
-  .pipe(z.number().min(0, "Amounts can't be negative.").max(1_000_000_000, "That amount is too large.").nullable())
-  .default(null);
 
 const rating = z
   .string()
@@ -28,9 +22,9 @@ const base = z.object({
     .toUpperCase()
     .regex(/^[A-Z]{3}$/, "Use a 3-letter currency code, like USD or CAD.")
     .default("USD"),
-  base_amount: money,
+  base_amount: moneyInput("base pay"),
   pay_period: z.enum(["year", "month", "hour"]).default("year"),
-  bonus_amount: money,
+  bonus_amount: moneyInput("bonus"),
   equity_text: optText(500),
   benefits_text: optText(2000),
   location: optText(200),

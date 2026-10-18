@@ -41,14 +41,17 @@ export async function sendCopilotMessage(applicationId: string, _prev: ActionSta
     return { error: e instanceof AiUnavailableError ? e.message : "The assistant couldn't answer. Please try again." };
   }
 
+  // Rows inserted together share a timestamp, so give the reply a later one to keep the order stable.
+  const askedAt = Date.now();
   const { error } = await supabase.from("copilot_messages").insert([
-    { application_id: id.data, role: "user", content: question },
+    { application_id: id.data, role: "user", content: question, created_at: new Date(askedAt).toISOString() },
     {
       application_id: id.data,
       role: "assistant",
       content: reply.answer,
       sources: reply.sources,
       draft: reply.draft,
+      created_at: new Date(askedAt + 1).toISOString(),
     },
   ]);
   if (error) return { error: dbMessage(error, "The answer couldn't be saved. Please try again.") };

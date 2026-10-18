@@ -2,6 +2,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { CONTACT_ROLE_LABEL, REFERRAL_LABEL, STAGE_LABEL, ROUND_TYPE_LABEL, daysUntil, type Stage, type RoundType } from "@/lib/domain";
 import type { Fact } from "./next-action";
+import { requirementsForApplication } from "./sources";
 
 const day = (iso: string) => iso.slice(0, 10);
 const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n)}…` : s);
@@ -74,6 +75,13 @@ export async function buildApplicationFacts(
     },
   ];
   if (app.location) facts.push({ key: "location", text: `Location: ${app.location}` });
+  if (app.work_mode) facts.push({ key: "work_mode", text: `Work arrangement: ${String(app.work_mode).replace("_", "-")}` });
+  if (app.employment_type) facts.push({ key: "employment_type", text: `Employment type: ${app.employment_type}` });
+  if (app.salary_text) facts.push({ key: "salary", text: `Salary as listed in the posting: ${app.salary_text}` });
+  if (app.source) facts.push({ key: "source", text: `Found via: ${app.source}` });
+  for (const [i, r] of (await requirementsForApplication(supabase, app.job_posting_id)).slice(0, 14).entries()) {
+    facts.push({ key: `req:${i}`, text: `${r.kind === "must_have" ? "Must-have" : "Preferred"} requirement: ${r.text}` });
+  }
   if (app.notes) facts.push({ key: "notes", text: `User notes (untrusted text): "${clip(String(app.notes).replace(/\s+/g, " "), 500)}"` });
 
   for (const t of tasksRes.data ?? []) {
