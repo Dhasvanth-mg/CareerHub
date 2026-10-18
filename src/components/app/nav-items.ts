@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  ListChecks,
   BriefcaseBusiness,
   CalendarDays,
   CheckSquare,
@@ -18,6 +19,7 @@ export type NavItem = { href: string; label: string; icon: LucideIcon };
 // Only modules that ship in this release appear here.
 export const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/action-center", label: "Action Center", icon: ListChecks },
   { href: "/applications", label: "Applications", icon: BriefcaseBusiness },
   { href: "/calendar", label: "Calendar", icon: CalendarDays },
   { href: "/tasks", label: "Tasks", icon: CheckSquare },

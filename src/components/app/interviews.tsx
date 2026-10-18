@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -167,6 +168,11 @@ export function RoundCard({ round, conflict }: { round: InterviewRound; conflict
             ) : null}
           </div>
         </form>
+        <div className="border-t p-3">
+          <Link href={`/applications/${round.application_id}/prep?round=${round.id}`} className="text-sm underline underline-offset-4">
+            Prepare for this interview
+          </Link>
+        </div>
         <form
           action={deleteRound.bind(null, round.id)}
           onSubmit={(e) => {

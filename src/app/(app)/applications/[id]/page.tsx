@@ -8,6 +8,7 @@ import { ApplicationForm } from "@/components/app/application-form";
 import { ConfirmForm } from "@/components/app/confirm-form";
 import { AddInterviewForm, RoundCard } from "@/components/app/interviews";
 import { LinkContactForm } from "@/components/app/link-contact-form";
+import { CopilotPanel } from "@/components/app/copilot-panel";
 import { NextActionPanel } from "@/components/app/next-action-panel";
 import { LocalTime } from "@/components/app/local-time";
 import { DeadlineBadge } from "@/components/app/stage-badge";
@@ -26,6 +27,9 @@ import { overlappingRounds } from "@/lib/calendar";
 import { setSubmittedVersion } from "../../documents/actions";
 import { deleteApplication, setArchived, updateApplication } from "../actions";
 import { setReferralStatus, unlinkContact } from "../../contacts/actions";
+
+// AI actions started from this page can take a while.
+export const maxDuration = 60;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -164,6 +168,8 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
 
       <NextActionPanel applicationId={id} />
 
+      <CopilotPanel applicationId={id} />
+
       <section aria-labelledby="details" className="space-y-4">
         <h2 id="details" className="text-lg font-medium">
           Details
@@ -223,9 +229,14 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
       </section>
 
       <section aria-labelledby="interviews" className="space-y-4">
-        <h2 id="interviews" className="text-lg font-medium">
-          Interviews
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 id="interviews" className="text-lg font-medium">
+            Interviews
+          </h2>
+          <Link href={`/applications/${id}/prep`} className="text-sm underline underline-offset-4">
+            Interview prep
+          </Link>
+        </div>
         {myRounds.length > 0 ? (
           <ul className="space-y-2">
             {myRounds.map((r) => (

@@ -5,89 +5,26 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logEvent } from "@/lib/events";
 import { type ActionState } from "@/lib/forms";
+import { buildApplicationFacts } from "@/lib/ai/application-facts";
 import { AiUnavailableError } from "@/lib/ai/groq";
 import { checkAiAllowed } from "@/lib/ai/guard";
-import { NEXT_ACTION_PROMPT_VERSION, suggestNextAction, type Fact } from "@/lib/ai/next-action";
-import { CONTACT_ROLE_LABEL, REFERRAL_LABEL, STAGE_LABEL, daysUntil, type Stage } from "@/lib/domain";
-
-const day = (iso: string) => iso.slice(0, 10);
-const clip = (s: string, n: number) => (s.length > n ? `${s.slice(0, n)}…` : s);
-
-function relative(date: string, today: string): string {
-  const d = daysUntil(date, new Date(`${today}T00:00:00Z`));
-  if (d === 0) return "today";
-  return d < 0 ? `${-d} days ago` : `in ${d} days`;
-}
+import { NEXT_ACTION_PROMPT_VERSION, suggestNextAction } from "@/lib/ai/next-action";
 
 export async function generateNextAction(applicationId: string): Promise<ActionState> {
   const id = z.string().uuid().safeParse(applicationId);
   if (!id.success) return { error: "Application not found." };
 
   const supabase = await createClient();
-  const { data: app } = await supabase.from("applications").select("*").eq("id", id.data).maybeSingle();
-  if (!app) return { error: "Application not found." };
+  const today = new Date().toISOString().slice(0, 10);
+  const record = await buildApplicationFacts(supabase, id.data, today);
+  if (!record) return { error: "Application not found." };
 
   const allowed = await checkAiAllowed(supabase, "next_action");
   if (!allowed.ok) return { error: allowed.message };
 
-  const today = new Date().toISOString().slice(0, 10);
-  const [tasksRes, eventsRes, contactsRes, referralsRes] = await Promise.all([
-    supabase
-      .from("tasks")
-      .select("id, title, due_at, completed_at")
-      .eq("application_id", id.data)
-      .order("created_at", { ascending: false })
-      .limit(15),
-    supabase
-      .from("application_events")
-      .select("id, summary, created_at")
-      .eq("application_id", id.data)
-      .order("created_at", { ascending: false })
-      .limit(15),
-    supabase.from("application_contacts").select("contact_id, role, contacts(name)").eq("application_id", id.data),
-    supabase.from("referrals").select("contact_id, status").eq("application_id", id.data),
-  ]);
-
-  // Everything the model may rely on, each with a key it must cite.
-  const facts: Fact[] = [
-    { key: "stage", text: `Stage: ${STAGE_LABEL[app.stage as Stage]}` },
-    { key: "role", text: `Role: ${app.title} at ${app.company_name}` },
-    { key: "priority", text: `Priority: ${app.priority}` },
-    {
-      key: "applied_on",
-      text: app.applied_on ? `Applied on ${app.applied_on} (${relative(app.applied_on, today)})` : "No applied date is recorded",
-    },
-    {
-      key: "deadline",
-      text: app.deadline ? `Application deadline ${app.deadline} (${relative(app.deadline, today)})` : "No deadline is recorded",
-    },
-    {
-      key: "submitted_resume",
-      text: app.submitted_resume_version_id ? "A submitted resume version is recorded" : "No submitted resume version is recorded",
-    },
-  ];
-  if (app.notes) facts.push({ key: "notes", text: `User notes (untrusted text): "${clip(String(app.notes).replace(/\s+/g, " "), 500)}"` });
-  for (const t of tasksRes.data ?? []) {
-    facts.push({
-      key: `task:${t.id}`,
-      text: t.completed_at
-        ? `Completed task: ${t.title} (done ${day(t.completed_at)})`
-        : `Open task: ${t.title}${t.due_at ? `, due ${day(t.due_at)} (${relative(day(t.due_at), today)})` : ", no due date"}`,
-    });
-  }
-  for (const e of eventsRes.data ?? []) facts.push({ key: `event:${e.id}`, text: `${day(e.created_at)}: ${e.summary}` });
-  const referral = new Map((referralsRes.data ?? []).map((r) => [r.contact_id, r.status as keyof typeof REFERRAL_LABEL]));
-  for (const c of contactsRes.data ?? []) {
-    const name = (c.contacts as unknown as { name: string } | null)?.name ?? "A contact";
-    facts.push({
-      key: `contact:${c.contact_id}`,
-      text: `${name} (${CONTACT_ROLE_LABEL[c.role as keyof typeof CONTACT_ROLE_LABEL]}), referral: ${REFERRAL_LABEL[referral.get(c.contact_id) ?? "not_requested"]}`,
-    });
-  }
-
   let result;
   try {
-    result = await suggestNextAction(facts, today);
+    result = await suggestNextAction(record.facts, today);
   } catch (e) {
     return { error: e instanceof AiUnavailableError ? e.message : "The suggestion couldn't be generated." };
   }

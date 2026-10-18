@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DeadlineBadge } from "@/components/app/stage-badge";
 import { LocalTime } from "@/components/app/local-time";
 import { STAGES, STAGE_LABEL, daysUntil, nowMs, type Stage } from "@/lib/domain";
+import { loadActionCenter } from "@/lib/actions-loader";
 
 export const metadata = { title: "Dashboard | CareerHub AI" };
 
@@ -42,6 +43,8 @@ export default async function DashboardPage() {
       .limit(8),
   ]);
 
+  const attention = await loadActionCenter(supabase, new Date(now));
+  const urgent = attention.visible.filter((i) => i.group === "overdue" || i.group === "due_soon" || i.group === "prep");
   const loadFailed = Boolean(appsRes.error || tasksRes.error || eventsRes.error);
   const apps = appsRes.data ?? [];
   const byStage = new Map<Stage, number>();
@@ -110,6 +113,30 @@ export default async function DashboardPage() {
         </div>
       ) : (
         <>
+          {attention.visible.length > 0 ? (
+            <section aria-labelledby="attention" className="rounded-lg border p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2 id="attention" className="font-medium">
+                  {urgent.length > 0
+                    ? `${urgent.length} thing${urgent.length === 1 ? "" : "s"} need${urgent.length === 1 ? "s" : ""} your attention`
+                    : `${attention.visible.length} suggestion${attention.visible.length === 1 ? "" : "s"} to tidy up`}
+                </h2>
+                <Link href="/action-center" className="text-sm underline underline-offset-4">
+                  Open Action Center
+                </Link>
+              </div>
+              <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
+                {attention.visible.slice(0, 3).map((i) => (
+                  <li key={i.key}>
+                    <Link href={i.href} className="underline-offset-4 hover:underline">
+                      {i.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           <section aria-label="Summary">
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {cards.map((c) => (

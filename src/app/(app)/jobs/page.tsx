@@ -2,6 +2,9 @@ import Link from "next/link";
 import { AiGate } from "@/components/app/ai-gate";
 import { JobCapture } from "@/components/app/job-capture";
 
+// AI actions started from this page can take a while.
+export const maxDuration = 60;
+
 export const metadata = { title: "Job Capture | CareerHub AI" };
 
 export default function JobsPage() {
