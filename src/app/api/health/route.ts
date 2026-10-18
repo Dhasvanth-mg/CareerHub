@@ -6,9 +6,9 @@ export async function GET() {
   let db = false;
   try {
     const supabase = await createClient();
-    // With no session, row-level security returns zero rows. An error means the database is unreachable.
-    const { error } = await supabase.from("profiles").select("id", { head: true, count: "exact" }).limit(1);
-    db = !error;
+    // Signed-out visitors can't read tables, so ask the database a question it can always answer.
+    const { data, error } = await supabase.rpc("health_check");
+    db = !error && data === true;
   } catch {
     db = false;
   }
