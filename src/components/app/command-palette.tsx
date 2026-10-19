@@ -144,7 +144,9 @@ export function CommandPalette() {
     if (!keyNav.current) return;
     keyNav.current = false;
     // Scroll the whole row, so a group's heading comes into view along with its first result.
-    document.getElementById(`${listId}-${clamped}`)?.closest("li")?.scrollIntoView({ block: "nearest" });
+    const row = document.getElementById(`${listId}-${clamped}`)?.closest("li");
+    if (clamped === 0) row?.parentElement?.scrollTo({ top: 0 });
+    else row?.scrollIntoView({ block: "nearest" });
   }, [clamped, listId]);
 
   const onInputKey = (e: React.KeyboardEvent) => {
