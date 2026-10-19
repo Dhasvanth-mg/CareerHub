@@ -76,7 +76,7 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
   return (
     <div className="max-w-3xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Resume Studio</h1>
+        <h1 className="text-3xl sm:text-4xl">Resume Studio</h1>
         <p className="text-sm text-muted-foreground">
           See which of a job&apos;s requirements your resume actually shows, with quotes from your own text. Suggestions only reword
           what&apos;s already there. You decide what to change.
@@ -84,7 +84,7 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
       </div>
 
       {versions.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
+        <div className="rounded-2xl border border-dashed p-8 text-center">
           <p className="font-medium">Add a resume first</p>
           <p className="mt-1 text-sm text-muted-foreground">Upload a PDF or paste your resume text in the Document Vault.</p>
           <Button className="mt-4" nativeButton={false} render={<Link href="/documents" />}>
@@ -92,7 +92,7 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
           </Button>
         </div>
       ) : jobs.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
+        <div className="rounded-2xl border border-dashed p-8 text-center">
           <p className="font-medium">Import a job to compare against</p>
           <p className="mt-1 text-sm text-muted-foreground">Job Capture saves the posting and its requirements.</p>
           <Button className="mt-4" nativeButton={false} render={<Link href="/jobs" />}>
@@ -100,7 +100,7 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
           </Button>
         </div>
       ) : (
-        <section aria-labelledby="run" className="space-y-3 rounded-lg border p-4">
+        <section aria-labelledby="run" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
           <h2 id="run" className="font-medium">
             New analysis
           </h2>
@@ -119,10 +119,10 @@ export default async function ResumeStudioPage({ searchParams }: PageProps<"/res
 
       {runs.length > 0 ? (
         <section aria-labelledby="past" className="space-y-3">
-          <h2 id="past" className="text-lg font-medium">
+          <h2 id="past" className="text-xl">
             Recent analyses
           </h2>
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {runs.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
                 <div>

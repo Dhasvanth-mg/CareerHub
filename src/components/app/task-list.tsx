@@ -26,7 +26,7 @@ export function TaskList({
   showApplication?: boolean;
 }) {
   return (
-    <ul className="divide-y rounded-lg border">
+    <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
       {tasks.map((t) => {
         const done = Boolean(t.completed_at);
         const overdue = !done && t.due_at !== null && Date.parse(t.due_at) < now;

@@ -75,7 +75,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
   return (
     <div className="max-w-3xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Cover Letter Studio</h1>
+        <h1 className="text-3xl sm:text-4xl">Cover Letter Studio</h1>
         <p className="text-sm text-muted-foreground">
           Get paragraph-by-paragraph feedback on a letter for a specific job, or start from a draft built only from your resume. You
           edit and approve everything. Nothing is sent anywhere.
@@ -83,7 +83,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
       </div>
 
       {jobs.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-8 text-center">
+        <div className="rounded-2xl border border-dashed p-8 text-center">
           <p className="font-medium">Import a job first</p>
           <p className="mt-1 text-sm text-muted-foreground">Letters are reviewed against a job&apos;s requirements.</p>
           <Button className="mt-4" nativeButton={false} render={<Link href="/jobs" />}>
@@ -93,7 +93,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
       ) : (
         <AiGate feature="Cover Letter Studio">
           <div className="space-y-8">
-            <section aria-labelledby="review" className="space-y-3 rounded-lg border p-4">
+            <section aria-labelledby="review" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
               <h2 id="review" className="font-medium">
                 Review a cover letter
               </h2>
@@ -118,7 +118,7 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
               )}
             </section>
 
-            <section aria-labelledby="draft" className="space-y-3 rounded-lg border p-4">
+            <section aria-labelledby="draft" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
               <h2 id="draft" className="font-medium">
                 Draft a first version
               </h2>
@@ -140,10 +140,10 @@ export default async function CoverLetterStudioPage({ searchParams }: PageProps<
 
       {runs.length > 0 ? (
         <section aria-labelledby="past" className="space-y-3">
-          <h2 id="past" className="text-lg font-medium">
+          <h2 id="past" className="text-xl">
             Recent reviews
           </h2>
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {runs.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
                 <div>

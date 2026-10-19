@@ -92,7 +92,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
         <Link href="/resume" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Resume Studio
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="text-3xl sm:text-4xl">
           {version?.documents?.title ?? "Resume"} vs. {jobLabel}
         </h1>
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
@@ -115,7 +115,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
       ) : (
         <>
           <section aria-labelledby="summary" className="space-y-3">
-            <h2 id="summary" className="text-lg font-medium">
+            <h2 id="summary" className="text-xl">
               Summary
             </h2>
             <p className="text-sm">{run.summary}</p>
@@ -125,7 +125,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
           </section>
 
           <section aria-labelledby="score" className="space-y-3">
-            <h2 id="score" className="text-lg font-medium">
+            <h2 id="score" className="text-xl">
               Guidance score
             </h2>
             {run.score !== null && breakdown?.lines ? (
@@ -138,7 +138,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
                   A rubric to help you decide what to work on. It is not an ATS score, a hiring prediction or a measure of your worth.
                   Rubric {run.rubric_version}.
                 </p>
-                <div className="overflow-x-auto rounded-lg border">
+                <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
                   <table className="w-full text-left text-sm">
                     <caption className="sr-only">Score breakdown</caption>
                     <thead className="border-b bg-muted/40">
@@ -168,12 +168,12 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
           </section>
 
           <section aria-labelledby="findings" className="space-y-3">
-            <h2 id="findings" className="text-lg font-medium">
+            <h2 id="findings" className="text-xl">
               Requirement by requirement
             </h2>
             <ul className="space-y-3">
               {findings.map((f) => (
-                <li key={f.id} className="space-y-2 rounded-lg border p-3 text-sm">
+                <li key={f.id} className="space-y-2 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <p className="font-medium">
                       {f.requirement}
@@ -198,7 +198,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
           </section>
 
           <section aria-labelledby="suggestions" className="space-y-3">
-            <h2 id="suggestions" className="text-lg font-medium">
+            <h2 id="suggestions" className="text-xl">
               Suggested edits
             </h2>
             <p className="text-sm text-muted-foreground">
@@ -210,7 +210,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
             ) : (
               <ul className="space-y-3">
                 {suggestions.map((s, i) => (
-                  <li key={i} className="space-y-2 rounded-lg border p-3 text-sm">
+                  <li key={i} className="space-y-2 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm">
                     {s.original ? (
                       <blockquote className="border-l-2 pl-3 text-muted-foreground line-through decoration-muted-foreground/50">
                         {s.original}
@@ -226,7 +226,7 @@ export default async function AnalysisPage({ params }: PageProps<"/resume/[id]">
 
           {version?.extracted_text ? (
             <section aria-labelledby="revise" className="space-y-3">
-              <h2 id="revise" className="text-lg font-medium">
+              <h2 id="revise" className="text-xl">
                 Make your edits
               </h2>
               <p className="text-sm text-muted-foreground">

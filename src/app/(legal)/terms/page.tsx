@@ -4,7 +4,7 @@ export default function TermsPage() {
   return (
     <>
       <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Terms of use</h1>
+        <h1 className="text-3xl sm:text-4xl">Terms of use</h1>
         <p className="text-sm text-muted-foreground">Last updated October 17, 2026</p>
       </div>
 

@@ -39,7 +39,7 @@ export default async function OffersPage() {
   return (
     <div className="max-w-5xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Offers</h1>
+        <h1 className="text-3xl sm:text-4xl">Offers</h1>
         <p className="text-sm text-muted-foreground">
           Compare offers side by side using the numbers you enter and the weights you choose. Nothing here is estimated or looked up: pay
           and benefits are exactly what each offer says.
@@ -48,7 +48,7 @@ export default async function OffersPage() {
 
       {offers.length >= 2 ? (
         <section aria-labelledby="compare" className="space-y-3">
-          <h2 id="compare" className="text-lg font-medium">
+          <h2 id="compare" className="text-xl">
             Compare
           </h2>
           <OfferComparison offers={offers} initialWeights={weights} />
@@ -56,11 +56,11 @@ export default async function OffersPage() {
       ) : null}
 
       <section aria-labelledby="offers" className="space-y-3">
-        <h2 id="offers" className="text-lg font-medium">
+        <h2 id="offers" className="text-xl">
           Your offers
         </h2>
         {offers.length === 0 ? (
-          <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+          <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
             No offers yet. When one comes in, add it below. Comparison appears once you have two.
           </p>
         ) : (
@@ -72,7 +72,7 @@ export default async function OffersPage() {
         )}
       </section>
 
-      <section aria-labelledby="add" className="space-y-3 rounded-lg border p-4">
+      <section aria-labelledby="add" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <h2 id="add" className="font-medium">
           Add an offer
         </h2>

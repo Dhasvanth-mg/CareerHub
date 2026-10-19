@@ -13,7 +13,7 @@ export default async function ResetPasswordPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Choose a new password</h1>
+        <h1 className="text-3xl sm:text-4xl">Choose a new password</h1>
         <p className="text-sm text-muted-foreground">You&apos;ll be logged in as {data.user.email} once it&apos;s saved.</p>
       </div>
       <ResetPasswordForm />

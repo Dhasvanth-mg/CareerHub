@@ -133,7 +133,7 @@ export function ApplicationImport() {
           <input type="hidden" name="rows" value={payload} />
 
           <section aria-labelledby="columns" className="space-y-3">
-            <h2 id="columns" className="text-lg font-medium">
+            <h2 id="columns" className="text-xl">
               Match your columns
             </h2>
             <p className="text-sm text-muted-foreground">We guessed from your headers. Change any that look wrong.</p>
@@ -184,7 +184,7 @@ export function ApplicationImport() {
 
           <section aria-labelledby="preview" className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 id="preview" className="text-lg font-medium">
+              <h2 id="preview" className="text-xl">
                 Review rows
               </h2>
               <div className="flex flex-wrap items-center gap-2">
@@ -206,7 +206,7 @@ export function ApplicationImport() {
               </p>
             ) : null}
 
-            <div className="max-h-[28rem] overflow-auto rounded-lg border">
+            <div className="max-h-[28rem] overflow-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
               <table className="w-full text-left text-sm">
                 <thead className="sticky top-0 bg-muted text-xs uppercase text-muted-foreground">
                   <tr>

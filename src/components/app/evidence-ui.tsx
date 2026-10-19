@@ -87,7 +87,7 @@ export function EvidenceCard({ item }: { item: EvidenceRow }) {
     if (!state?.error) toast.success("Saved");
   });
   return (
-    <li className="rounded-lg border">
+    <li className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
       <details>
         <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2 p-3 text-sm">
           <span className="font-medium">

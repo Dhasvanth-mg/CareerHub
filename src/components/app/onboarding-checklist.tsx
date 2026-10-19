@@ -9,7 +9,7 @@ export type OnboardingStep = { key: string; label: string; hint: string; href: s
 export function OnboardingChecklist({ steps }: { steps: OnboardingStep[] }) {
   const done = steps.filter((s) => s.done).length;
   return (
-    <section aria-labelledby="getting-started" className="rounded-lg border p-4">
+    <section aria-labelledby="getting-started" className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="getting-started" className="font-medium">
           Getting started <span className="font-normal text-muted-foreground">({done} of {steps.length} done)</span>

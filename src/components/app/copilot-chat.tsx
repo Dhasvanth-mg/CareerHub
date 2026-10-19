@@ -50,7 +50,7 @@ export function CopilotChat({ applicationId, messages }: { applicationId: string
           {messages.map((m) => (
             <li
               key={m.id}
-              className={m.role === "user" ? "ml-8 rounded-lg bg-muted/60 p-3 text-sm" : "mr-8 space-y-2 rounded-lg border p-3 text-sm"}
+              className={m.role === "user" ? "ml-8 rounded-lg bg-muted/60 p-3 text-sm" : "mr-8 space-y-2 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm"}
             >
               <p className="text-xs font-medium text-muted-foreground">{m.role === "user" ? "You" : "Assistant"}</p>
               <p className="whitespace-pre-wrap">{m.content}</p>

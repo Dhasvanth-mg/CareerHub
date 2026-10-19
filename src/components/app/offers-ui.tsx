@@ -158,7 +158,7 @@ export function OfferCard({ offer }: { offer: OfferRow }) {
   });
   const total = totalCash(offer);
   return (
-    <li className="rounded-lg border">
+    <li className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
       <details>
         <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2 p-3 text-sm">
           <span className="font-medium">{offer.label}</span>
@@ -244,7 +244,7 @@ export function OfferComparison({ offers, initialWeights }: { offers: OfferRow[]
         </p>
       ) : null}
 
-      <div className="overflow-x-auto rounded-lg border">
+      <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
         <table className="w-full min-w-[32rem] text-left text-sm">
           <caption className="sr-only">Offer comparison</caption>
           <thead className="border-b bg-muted/40">
@@ -330,7 +330,7 @@ export function OfferComparison({ offers, initialWeights }: { offers: OfferRow[]
         </table>
       </div>
 
-      <details className="rounded-lg border p-4 text-sm">
+      <details className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4 text-sm">
         <summary className="cursor-pointer font-medium">How this is calculated</summary>
         <ul className="mt-3 list-disc space-y-1 pl-5 text-muted-foreground">
           <li>Each criterion you rated is scored 1 to 5 and multiplied by its weight. The score is the total as a share of the best possible.</li>

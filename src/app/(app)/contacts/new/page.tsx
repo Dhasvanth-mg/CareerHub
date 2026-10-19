@@ -11,7 +11,7 @@ export default function NewContactPage() {
         <Link href="/contacts" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Contacts
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Add contact</h1>
+        <h1 className="mt-2 text-3xl sm:text-4xl">Add contact</h1>
       </div>
       <ContactForm action={createContact} submitLabel="Create contact" />
     </div>

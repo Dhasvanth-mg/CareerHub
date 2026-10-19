@@ -19,7 +19,7 @@ export async function StorageSection({ userId }: { userId: string }) {
 
   return (
     <section aria-labelledby="storage" className="space-y-3">
-      <h2 id="storage" className="text-lg font-medium">
+      <h2 id="storage" className="text-xl">
         Storage
       </h2>
       <p className="text-sm text-muted-foreground">

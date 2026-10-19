@@ -66,7 +66,7 @@ export default async function PrepPage({ params, searchParams }: PageProps<"/app
         <Link href={`/applications/${id}`} className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← {app.title} at {app.company_name}
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">Interview prep</h1>
+        <h1 className="text-3xl sm:text-4xl">Interview prep</h1>
         <p className="text-sm text-muted-foreground">
           Practice questions based on this role&apos;s requirements and your own experience. Write your answers in your own words. The AI
           reviews them but never writes them for you.
@@ -95,7 +95,7 @@ export default async function PrepPage({ params, searchParams }: PageProps<"/app
         })}
       </nav>
 
-      <section aria-labelledby="gen" className="space-y-3 rounded-lg border p-4">
+      <section aria-labelledby="gen" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <h2 id="gen" className="font-medium">
           {items && items.length ? "Generate more questions" : "Generate practice questions"}
         </h2>
@@ -111,7 +111,7 @@ export default async function PrepPage({ params, searchParams }: PageProps<"/app
       </section>
 
       {items && items.length > 0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3">
           <p className="text-sm text-muted-foreground">Ready to rehearse? Answer these against a clock.</p>
           <Button nativeButton={false} variant="outline" render={<Link href={roundId ? `/applications/${id}/prep/practice?round=${roundId}` : `/applications/${id}/prep/practice`} />}>
             Start timed practice
@@ -126,7 +126,7 @@ export default async function PrepPage({ params, searchParams }: PageProps<"/app
           ))}
         </ul>
       ) : (
-        <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
           No practice questions yet. Generate a set above.
         </p>
       )}

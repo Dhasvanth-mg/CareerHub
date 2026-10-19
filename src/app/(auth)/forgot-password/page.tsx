@@ -8,7 +8,7 @@ export default function ForgotPasswordPage() {
   if (!EMAIL_FLOWS_ENABLED) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Password reset isn&apos;t available yet</h1>
+        <h1 className="text-3xl sm:text-4xl">Password reset isn&apos;t available yet</h1>
         <p className="text-sm text-muted-foreground">
           Email sending isn&apos;t set up for this app yet, so we can&apos;t send reset links. Contact the person who invited you if you
           are locked out.
@@ -22,7 +22,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Reset your password</h1>
+        <h1 className="text-3xl sm:text-4xl">Reset your password</h1>
         <p className="text-sm text-muted-foreground">Enter your email and we&apos;ll send you a link to choose a new one.</p>
       </div>
       <ForgotPasswordForm />

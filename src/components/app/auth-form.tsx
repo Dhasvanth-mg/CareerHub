@@ -27,7 +27,7 @@ export function AuthForm({ mode, action, providers = [], next, initialError, not
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="text-3xl sm:text-4xl">
           {isLogin ? "Welcome back" : "Create your account"}
         </h1>
         <p className="text-sm text-muted-foreground">
@@ -46,7 +46,7 @@ export function AuthForm({ mode, action, providers = [], next, initialError, not
           {providers.map((p) => (
             // A plain server-action form: works without JavaScript and never puts anything in the URL.
             <form key={p.id} action={signInWithProvider.bind(null, p.id)}>
-              <Button type="submit" variant="outline" className="w-full">
+              <Button type="submit" variant="outline" size="lg" className="w-full">
                 Continue with {p.label}
               </Button>
             </form>
@@ -96,7 +96,7 @@ export function AuthForm({ mode, action, providers = [], next, initialError, not
           {error ? <p className="text-destructive">{error}</p> : null}
           {state?.message ? <p className="text-muted-foreground">{state.message}</p> : null}
         </div>
-        <Button type="submit" className="w-full" disabled={pending}>
+        <Button type="submit" size="lg" className="w-full" disabled={pending}>
           {pending ? "Please wait…" : isLogin ? "Log in" : "Sign up"}
         </Button>
       </form>

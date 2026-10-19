@@ -39,7 +39,7 @@ export default async function AdminPage() {
   if (error || !o) {
     return (
       <div className="max-w-5xl space-y-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
+        <h1 className="text-3xl sm:text-4xl">Admin</h1>
         <p role="alert" className="text-sm text-destructive">
           The overview couldn&apos;t be loaded. Try again in a moment.
         </p>
@@ -62,7 +62,7 @@ export default async function AdminPage() {
   return (
     <div className="max-w-5xl space-y-8">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Admin</h1>
+        <h1 className="text-3xl sm:text-4xl">Admin</h1>
         <p className="text-sm text-muted-foreground">
           Counts only. This page never shows anyone&apos;s email, documents, notes or AI output. Numbers as of{" "}
           {new Date(o.generated_at).toISOString().slice(0, 16).replace("T", " ")} UTC.
@@ -71,7 +71,7 @@ export default async function AdminPage() {
 
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {stats.map(([label, value, hint]) => (
-          <div key={label} className="rounded-lg border p-3">
+          <div key={label} className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3">
             <dt className="text-xs text-muted-foreground">{label}</dt>
             <dd className="text-2xl font-semibold">{value}</dd>
             {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
@@ -80,7 +80,7 @@ export default async function AdminPage() {
       </dl>
 
       <section aria-labelledby="ai" className="space-y-3">
-        <h2 id="ai" className="text-lg font-medium">
+        <h2 id="ai" className="text-xl">
           AI use
         </h2>
         <p className="text-sm">
@@ -111,7 +111,7 @@ export default async function AdminPage() {
       </section>
 
       <section aria-labelledby="signups" className="space-y-3">
-        <h2 id="signups" className="text-lg font-medium">
+        <h2 id="signups" className="text-xl">
           Sign-ups, last 30 days
         </h2>
         {o.signups_by_day.length === 0 ? (
@@ -133,10 +133,10 @@ export default async function AdminPage() {
 
       <div className="grid gap-8 md:grid-cols-2">
         <section aria-labelledby="providers" className="space-y-3">
-          <h2 id="providers" className="text-lg font-medium">
+          <h2 id="providers" className="text-xl">
             Sign-in methods
           </h2>
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {Object.entries(o.providers)
               .sort((a, b) => b[1] - a[1])
               .map(([p, n]) => (
@@ -149,10 +149,10 @@ export default async function AdminPage() {
         </section>
 
         <section aria-labelledby="rows" className="space-y-3">
-          <h2 id="rows" className="text-lg font-medium">
+          <h2 id="rows" className="text-xl">
             Records stored
           </h2>
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {Object.entries(o.rows).map(([k, n]) => (
               <li key={k} className="flex justify-between p-2.5">
                 <span>{ROW_LABEL[k] ?? k}</span>

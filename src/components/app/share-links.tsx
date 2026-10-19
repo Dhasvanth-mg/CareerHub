@@ -66,7 +66,7 @@ export function ShareLinkForm() {
       </form>
 
       {created ? (
-        <div role="status" className="space-y-2 rounded-lg border border-green-600/40 bg-green-50 p-3 text-sm dark:bg-green-950/40">
+        <div role="status" className="space-y-2 rounded-2xl border border-green-600/40 bg-green-50 p-3 text-sm dark:bg-green-950/40">
           <p className="font-medium">Your link is ready. Copy it now: it can&apos;t be shown again.</p>
           <div className="flex flex-wrap items-center gap-2">
             <Input readOnly value={created} aria-label="Share link" onFocus={(e) => e.currentTarget.select()} className="min-w-0 flex-1" />

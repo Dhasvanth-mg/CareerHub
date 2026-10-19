@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { BriefcaseBusiness, CheckSquare, ScanSearch, UserPlus } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, CheckSquare, ScanSearch } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DeadlineBadge } from "@/components/app/stage-badge";
+import { Ascent, type AscentData } from "@/components/app/ascent";
+import { EmptyState } from "@/components/app/empty-state";
+import { Greeting } from "@/components/app/greeting";
 import { LocalTime } from "@/components/app/local-time";
-import { STAGES, STAGE_LABEL, daysUntil, nowMs, type Stage } from "@/lib/domain";
-import { loadActionCenter } from "@/lib/actions-loader";
 import { OnboardingChecklist, type OnboardingStep } from "@/components/app/onboarding-checklist";
+import { STAGES, daysUntil, deadlineLabel, nowMs, type Stage } from "@/lib/domain";
+import { loadActionCenter } from "@/lib/actions-loader";
 import { ONBOARDING_COOKIE } from "@/lib/onboarding";
+import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Dashboard | CareerHub AI" };
 
@@ -23,6 +25,10 @@ type EventRow = {
   applications: { title: string; company_name: string } | null;
 };
 
+type NextUp = { key: string; kind: "overdue" | "task" | "deadline"; title: string; href: string; at: string };
+
+const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const now = nowMs();
@@ -31,7 +37,7 @@ export default async function DashboardPage() {
   const hidden = (await cookies()).get(ONBOARDING_COOKIE)?.value === "1";
   const any = (table: "documents" | "tasks" | "contacts") =>
     supabase.from(table).select("id", { count: "exact", head: true }).limit(1);
-  const [appsRes, tasksRes, referralsRes, eventsRes, hasResume, hasTask, hasContact, profileRes] = await Promise.all([
+  const [appsRes, tasksRes, referralsRes, eventsRes, hasResume, hasTask, hasContact, profileRes, roundsRes] = await Promise.all([
     supabase.from("applications").select("id, company_name, title, stage, deadline").is("archived_at", null).limit(1000),
     supabase
       .from("tasks")
@@ -46,19 +52,33 @@ export default async function DashboardPage() {
       .from("application_events")
       .select("id, summary, created_at, application_id, applications(title, company_name)")
       .order("created_at", { ascending: false })
-      .limit(8),
+      .limit(7),
     supabase.from("documents").select("id", { count: "exact", head: true }).eq("kind", "resume"),
     any("tasks"),
     any("contacts"),
-    supabase.from("profiles").select("ai_notice_accepted_at").maybeSingle(),
+    supabase.from("profiles").select("display_name, ai_notice_accepted_at").maybeSingle(),
+    supabase
+      .from("interview_rounds")
+      .select("id", { count: "exact", head: true })
+      .neq("status", "cancelled")
+      .gte("scheduled_at", new Date(now).toISOString())
+      .lt("scheduled_at", horizon),
   ]);
 
   const attention = await loadActionCenter(supabase, new Date(now));
   const urgent = attention.visible.filter((i) => i.group === "overdue" || i.group === "due_soon" || i.group === "prep");
   const loadFailed = Boolean(appsRes.error || tasksRes.error || eventsRes.error);
   const apps = appsRes.data ?? [];
-  const byStage = new Map<Stage, number>();
-  for (const a of apps) byStage.set(a.stage as Stage, (byStage.get(a.stage as Stage) ?? 0) + 1);
+
+  const ascent = Object.fromEntries(STAGES.map((s) => [s, { count: 0, names: [] as string[] }])) as AscentData;
+  for (const a of apps) {
+    const slot = ascent[a.stage as Stage];
+    if (!slot) continue;
+    slot.count++;
+    slot.names.push(a.company_name);
+  }
+  const count = (s: Stage) => ascent[s].count;
+  const active = ACTIVE.reduce((n, s) => n + count(s), 0);
 
   const dueTasks = (tasksRes.data ?? []).filter((t) => !t.snoozed_until || Date.parse(t.snoozed_until) <= now);
   const overdueTasks = dueTasks.filter((t) => Date.parse(t.due_at as string) < now);
@@ -68,16 +88,34 @@ export default async function DashboardPage() {
     .slice(0, 6);
   const events = (eventsRes.data ?? []) as unknown as EventRow[];
 
-  const cards: { label: string; value: number; hint?: string }[] = [
-    { label: "Total applications", value: apps.length },
-    { label: "Active", value: ACTIVE.reduce((n, s) => n + (byStage.get(s) ?? 0), 0), hint: "Saved through offer" },
-    { label: "Interviews", value: byStage.get("interview") ?? 0 },
-    { label: "Offers", value: (byStage.get("offer") ?? 0) + (byStage.get("accepted") ?? 0) },
-    { label: "Rejections", value: byStage.get("rejected") ?? 0 },
-    { label: "Tasks due", value: dueTasks.length, hint: overdueTasks.length ? `${overdueTasks.length} overdue` : "Next 7 days" },
-    { label: "Referrals pending", value: referralsRes.count ?? 0, hint: "Requested, no answer yet" },
-  ];
-  const maxStage = Math.max(1, ...STAGES.map((s) => byStage.get(s) ?? 0));
+  // One list of what is coming, soonest first, with anything overdue on top.
+  const nextUp: NextUp[] = [
+    ...dueTasks.slice(0, 8).map((t) => ({
+      key: `t-${t.id}`,
+      kind: (Date.parse(t.due_at as string) < now ? "overdue" : "task") as NextUp["kind"],
+      title: t.title,
+      href: t.application_id ? `/applications/${t.application_id}` : "/tasks",
+      at: t.due_at as string,
+    })),
+    ...upcomingDeadlines.map((a) => ({
+      key: `d-${a.id}`,
+      kind: "deadline" as const,
+      title: `${a.title} at ${a.company_name}`,
+      href: `/applications/${a.id}`,
+      at: `${a.deadline}T12:00:00Z`,
+    })),
+  ]
+    .sort((a, b) => (a.kind === "overdue" ? -1 : 0) - (b.kind === "overdue" ? -1 : 0) || a.at.localeCompare(b.at))
+    .slice(0, 8);
+
+  const interviewsThisWeek = roundsRes.count ?? 0;
+  const summary = [
+    plural(active, "active application"),
+    interviewsThisWeek > 0 ? `${plural(interviewsThisWeek, "interview")} in the next week` : null,
+    count("offer") > 0 ? `${plural(count("offer"), "offer")} to answer` : null,
+  ]
+    .filter(Boolean)
+    .join(", ");
 
   const steps: OnboardingStep[] = [
     { key: "app", label: "Add your first application", hint: "Add one by hand, import a CSV, or paste a posting.", href: "/applications/new", done: apps.length > 0 },
@@ -87,11 +125,28 @@ export default async function DashboardPage() {
     { key: "contact", label: "Add a contact", hint: "Recruiters, alumni and referrals, linked to applications.", href: "/contacts/new", done: (hasContact.count ?? 0) > 0 },
   ];
   const showOnboarding = !hidden && !loadFailed && steps.some((s) => !s.done);
+  const firstName = profileRes.data?.display_name?.trim().split(/\s+/)[0] ?? null;
 
   return (
-    <div className="max-w-5xl space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+    <div className="space-y-10">
+      <header className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+        <div className="space-y-1.5">
+          <h1 className="text-3xl sm:text-4xl">
+            <Greeting name={firstName} />
+          </h1>
+          <p className="text-muted-foreground">
+            {apps.length === 0 ? "Your search starts here." : summary ? `${summary}.` : "Nothing in motion yet."}
+            {overdueTasks.length > 0 ? (
+              <>
+                {" "}
+                <Link href="/tasks" className="font-medium text-destructive underline-offset-4 hover:underline">
+                  {plural(overdueTasks.length, "task")} overdue
+                </Link>
+                .
+              </>
+            ) : null}
+          </p>
+        </div>
         <div className="flex flex-wrap gap-2">
           <Button nativeButton={false} render={<Link href="/applications/new" />}>
             <BriefcaseBusiness aria-hidden="true" /> Add application
@@ -102,14 +157,11 @@ export default async function DashboardPage() {
           <Button nativeButton={false} variant="outline" render={<Link href="/tasks" />}>
             <CheckSquare aria-hidden="true" /> Add task
           </Button>
-          <Button nativeButton={false} variant="outline" render={<Link href="/contacts/new" />}>
-            <UserPlus aria-hidden="true" /> Add contact
-          </Button>
         </div>
-      </div>
+      </header>
 
       {loadFailed ? (
-        <p role="alert" className="rounded-md border border-destructive/40 p-3 text-sm text-destructive">
+        <p role="alert" className="rounded-xl border border-destructive/40 p-3 text-sm text-destructive">
           Some dashboard data couldn&apos;t be loaded. Refresh to try again.
         </p>
       ) : null}
@@ -117,37 +169,33 @@ export default async function DashboardPage() {
       {showOnboarding ? <OnboardingChecklist steps={steps} /> : null}
 
       {apps.length === 0 && !loadFailed ? (
-        <div className="rounded-lg border border-dashed p-8">
-          <h2 className="text-lg font-medium">Start your search</h2>
-          <p className="mt-1 max-w-xl text-sm text-muted-foreground">
-            Add a role you&apos;re interested in, or paste a job posting and let CareerHub pull out the details for you to review. Your
-            next steps and deadlines will show up here.
-          </p>
-          <div className="mt-4 flex gap-2">
-            <Button nativeButton={false} render={<Link href="/jobs" />}>
-              Import a job posting
-            </Button>
-            <Button nativeButton={false} variant="outline" render={<Link href="/applications/new" />}>
-              Add manually
-            </Button>
-          </div>
-        </div>
+        <EmptyState
+          title="Start your climb"
+          description="Add a role you're interested in, or paste a job posting and let CareerHub pull out the details for you to review. Your next steps and deadlines will show up here."
+        >
+          <Button nativeButton={false} render={<Link href="/jobs" />}>
+            Import a job posting
+          </Button>
+          <Button nativeButton={false} variant="outline" render={<Link href="/applications/new" />}>
+            Add one by hand
+          </Button>
+        </EmptyState>
       ) : (
         <>
-          {attention.visible.length > 0 ? (
-            <section aria-labelledby="attention" className="rounded-lg border p-4">
+          <Ascent data={ascent} />
+
+          {urgent.length > 0 ? (
+            <section aria-labelledby="attention" className="rounded-2xl border-l-4 border-sunrise bg-card p-5 shadow-lift">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h2 id="attention" className="font-medium">
-                  {urgent.length > 0
-                    ? `${urgent.length} thing${urgent.length === 1 ? "" : "s"} need${urgent.length === 1 ? "s" : ""} your attention`
-                    : `${attention.visible.length} suggestion${attention.visible.length === 1 ? "" : "s"} to tidy up`}
+                <h2 id="attention" className="text-lg font-semibold">
+                  {plural(urgent.length, "thing")} need{urgent.length === 1 ? "s" : ""} you soon
                 </h2>
-                <Link href="/action-center" className="text-sm underline underline-offset-4">
-                  Open Action Center
+                <Link href="/action-center" className="inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline">
+                  Open Action Center <ArrowUpRight className="size-4" aria-hidden="true" />
                 </Link>
               </div>
-              <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
-                {attention.visible.slice(0, 3).map((i) => (
+              <ul className="mt-3 space-y-1.5 text-sm">
+                {urgent.slice(0, 3).map((i) => (
                   <li key={i.key}>
                     <Link href={i.href} className="underline-offset-4 hover:underline">
                       {i.title}
@@ -158,109 +206,70 @@ export default async function DashboardPage() {
             </section>
           ) : null}
 
-          <section aria-label="Summary">
-            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {cards.map((c) => (
-                <li key={c.label}>
-                  <Card size="sm" className="h-full">
-                    <CardHeader>
-                      <CardTitle className="text-sm font-medium text-muted-foreground">{c.label}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-3xl font-semibold tabular-nums">{c.value}</p>
-                      {c.hint ? <p className="text-xs text-muted-foreground">{c.hint}</p> : null}
-                    </CardContent>
-                  </Card>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-x-12 gap-y-10 lg:grid-cols-[3fr_2fr]">
             <section aria-labelledby="coming-up" className="space-y-3">
-              <h2 id="coming-up" className="text-lg font-medium">
+              <h2 id="coming-up" className="text-xl">
                 Coming up
               </h2>
-              {dueTasks.length === 0 && upcomingDeadlines.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Nothing due in the next week. Nice.</p>
+              {nextUp.length === 0 ? (
+                <p className="rounded-xl border border-dashed p-6 text-sm text-muted-foreground">
+                  Nothing due in the next week. A good moment to add an application or tidy your notes.
+                </p>
               ) : (
-                <ul className="divide-y rounded-lg border text-sm">
-                  {dueTasks.slice(0, 6).map((t) => (
-                    <li key={t.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
-                      <Link
-                        href={t.application_id ? `/applications/${t.application_id}` : "/tasks"}
-                        className="font-medium underline-offset-4 hover:underline"
-                      >
-                        {t.title}
+                <ul className="divide-y text-sm">
+                  {nextUp.map((n) => (
+                    <li key={n.key} className="flex items-center gap-3 py-3">
+                      <span
+                        aria-hidden="true"
+                        className={cn("size-2.5 shrink-0 rounded-full", n.kind === "overdue" ? "bg-destructive" : n.kind === "deadline" ? "bg-sunrise" : "bg-primary")}
+                      />
+                      <Link href={n.href} className="min-w-0 flex-1 truncate font-medium underline-offset-4 hover:underline">
+                        {n.title}
                       </Link>
-                      <span className={Date.parse(t.due_at as string) < now ? "text-rose-600 dark:text-rose-300" : "text-muted-foreground"}>
-                        {Date.parse(t.due_at as string) < now ? "Overdue: " : ""}
-                        <LocalTime iso={t.due_at as string} />
+                      <span className={cn("shrink-0 text-xs", n.kind === "overdue" ? "font-medium text-destructive" : "text-muted-foreground")}>
+                        {n.kind === "overdue" ? "Overdue, " : n.kind === "deadline" ? `${deadlineLabel(n.at.slice(0, 10)).text}, ` : ""}
+                        {n.kind === "deadline" ? <LocalTime iso={n.at} dateOnly /> : <LocalTime iso={n.at} />}
                       </span>
-                    </li>
-                  ))}
-                  {upcomingDeadlines.map((a) => (
-                    <li key={a.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
-                      <Link href={`/applications/${a.id}`} className="font-medium underline-offset-4 hover:underline">
-                        {a.title} at {a.company_name}
-                      </Link>
-                      <DeadlineBadge date={a.deadline as string} />
                     </li>
                   ))}
                 </ul>
               )}
+              {(referralsRes.count ?? 0) > 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {plural(referralsRes.count ?? 0, "referral request")} waiting for an answer.
+                </p>
+              ) : null}
             </section>
 
-            <section aria-labelledby="by-stage" className="space-y-3">
-              <h2 id="by-stage" className="text-lg font-medium">
-                By stage
+            <section aria-labelledby="activity" className="space-y-3">
+              <h2 id="activity" className="text-xl">
+                Recent activity
               </h2>
-              <ul className="space-y-2 text-sm">
-                {STAGES.map((s) => {
-                  const n = byStage.get(s) ?? 0;
-                  return (
-                    <li key={s} className="flex items-center gap-3">
-                      <span className="w-24 shrink-0 text-muted-foreground">{STAGE_LABEL[s]}</span>
-                      <div className="h-2 flex-1 rounded-full bg-muted" aria-hidden="true">
-                        <div className="h-2 rounded-full bg-primary" style={{ width: `${(n / maxStage) * 100}%` }} />
-                      </div>
-                      <span className="w-6 text-right tabular-nums">{n}</span>
+              {events.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Changes you make to applications show up here.</p>
+              ) : (
+                <ol className="relative ml-1.5 space-y-5 border-l pl-6 text-sm">
+                  {events.map((e) => (
+                    <li key={e.id} className="relative">
+                      <span aria-hidden="true" className="absolute -left-[29px] top-1.5 size-2 rounded-full bg-border ring-4 ring-background" />
+                      <p>{e.summary}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {e.applications ? (
+                          <>
+                            <Link href={`/applications/${e.application_id}`} className="underline-offset-4 hover:underline">
+                              {e.applications.title} at {e.applications.company_name}
+                            </Link>
+                            {" "}
+                          </>
+                        ) : null}
+                        <LocalTime iso={e.created_at} />
+                      </p>
                     </li>
-                  );
-                })}
-              </ul>
+                  ))}
+                </ol>
+              )}
             </section>
           </div>
-
-          <section aria-labelledby="activity" className="space-y-3">
-            <h2 id="activity" className="text-lg font-medium">
-              Recent activity
-            </h2>
-            {events.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No activity yet.</p>
-            ) : (
-              <ul className="divide-y rounded-lg border text-sm">
-                {events.map((e) => (
-                  <li key={e.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
-                    <p>
-                      {e.summary}
-                      {e.applications ? (
-                        <>
-                          {" · "}
-                          <Link href={`/applications/${e.application_id}`} className="text-muted-foreground underline underline-offset-4">
-                            {e.applications.title} at {e.applications.company_name}
-                          </Link>
-                        </>
-                      ) : null}
-                    </p>
-                    <span className="text-xs text-muted-foreground">
-                      <LocalTime iso={e.created_at} />
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
         </>
       )}
     </div>

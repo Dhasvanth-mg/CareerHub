@@ -74,7 +74,7 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
         <Link href="/cover-letter" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Cover Letter Studio
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="text-3xl sm:text-4xl">
           {version?.documents?.title ?? "Cover letter"} vs. {jobLabel}
         </h1>
         <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
@@ -97,14 +97,14 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
       ) : (
         <>
           <section aria-labelledby="summary" className="space-y-2">
-            <h2 id="summary" className="text-lg font-medium">
+            <h2 id="summary" className="text-xl">
               Summary
             </h2>
             <p className="text-sm">{run.summary}</p>
           </section>
 
           <section aria-labelledby="score" className="space-y-3">
-            <h2 id="score" className="text-lg font-medium">
+            <h2 id="score" className="text-xl">
               Guidance score
             </h2>
             {run.score !== null && breakdown?.lines ? (
@@ -117,7 +117,7 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
                   A rubric to help you decide what to work on. It&apos;s not a hiring prediction or a measure of your worth. Rubric{" "}
                   {run.rubric_version}.
                 </p>
-                <div className="overflow-x-auto rounded-lg border">
+                <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
                   <table className="w-full text-left text-sm">
                     <caption className="sr-only">Score breakdown</caption>
                     <thead className="border-b bg-muted/40">
@@ -148,7 +148,7 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
 
           {flagged.length > 0 ? (
             <section aria-labelledby="flagged" className="space-y-3">
-              <h2 id="flagged" className="text-lg font-medium">
+              <h2 id="flagged" className="text-xl">
                 Statements to double-check
               </h2>
               <p className="text-sm text-muted-foreground">
@@ -157,7 +157,7 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
               </p>
               <ul className="space-y-3">
                 {flagged.map((f, i) => (
-                  <li key={i} className="space-y-2 rounded-lg border border-amber-300 p-3 text-sm">
+                  <li key={i} className="space-y-2 rounded-2xl border border-amber-300 p-3 text-sm">
                     <blockquote className="border-l-2 pl-3">&ldquo;{f.claim}&rdquo;</blockquote>
                     <p>{f.concern}</p>
                     {f.resume_quote ? (
@@ -172,12 +172,12 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
           ) : null}
 
           <section aria-labelledby="paras" className="space-y-3">
-            <h2 id="paras" className="text-lg font-medium">
+            <h2 id="paras" className="text-xl">
               Paragraph by paragraph
             </h2>
             <ul className="space-y-3">
               {paragraphs.map((p, i) => (
-                <li key={i} className="space-y-2 rounded-lg border p-3 text-sm">
+                <li key={i} className="space-y-2 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <p className="font-medium">Paragraph {i + 1}</p>
                     <Badge variant="secondary">{ISSUE_LABEL[p.issue] ?? p.issue}</Badge>
@@ -197,7 +197,7 @@ export default async function CoverLetterResultPage({ params }: PageProps<"/cove
 
           {version?.extracted_text ? (
             <section aria-labelledby="revise" className="space-y-3">
-              <h2 id="revise" className="text-lg font-medium">
+              <h2 id="revise" className="text-xl">
                 Make your edits
               </h2>
               <p className="text-sm text-muted-foreground">

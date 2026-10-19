@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { bulkApplications } from "@/app/(app)/applications/bulk-actions";
 import { LocalTime } from "@/components/app/local-time";
+import { Monogram } from "@/components/app/monogram";
 import { DeadlineBadge, StageBadge } from "@/components/app/stage-badge";
 import { SubmitButton } from "@/components/app/submit-button";
 import { NativeSelect } from "@/components/ui/native-select";
@@ -61,7 +62,7 @@ export function ApplicationsTable({ rows, headers, archivedView }: { rows: Table
   return (
     <form ref={formRef} method="post" onSubmit={guard} className="space-y-3">
       <div
-        className="flex flex-wrap items-center gap-2 rounded-lg border bg-muted/30 p-2 text-sm"
+        className="flex flex-wrap items-center gap-2 rounded-xl bg-muted/70 p-2 text-sm"
         role="group"
         aria-label="Bulk actions"
       >
@@ -104,10 +105,10 @@ export function ApplicationsTable({ rows, headers, archivedView }: { rows: Table
         <input key={id} type="hidden" name="ids" value={id} />
       ))}
 
-      <div className="overflow-x-auto rounded-lg border">
+      <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
         <table className="w-full text-left text-sm">
           <caption className="sr-only">Applications</caption>
-          <thead className="border-b bg-muted/40">
+          <thead className="border-b text-muted-foreground">
             <tr>
               <th scope="col" className="w-10 px-3 py-2">
                 <input
@@ -118,8 +119,8 @@ export function ApplicationsTable({ rows, headers, archivedView }: { rows: Table
                 />
               </th>
               {headers.map((h) => (
-                <th key={h.key} scope="col" aria-sort={h.aria} className="px-3 py-2 font-medium">
-                  <Link href={h.href} className="hover:underline">
+                <th key={h.key} scope="col" aria-sort={h.aria} className="px-3 py-3 text-xs font-medium">
+                  <Link href={h.href} className="hover:text-foreground">
                     {h.label}
                     {h.arrow}
                   </Link>
@@ -129,7 +130,7 @@ export function ApplicationsTable({ rows, headers, archivedView }: { rows: Table
           </thead>
           <tbody className="divide-y">
             {rows.map((a) => (
-              <tr key={a.id} className={selected.has(a.id) ? "bg-muted/40" : "hover:bg-muted/30"}>
+              <tr key={a.id} className={selected.has(a.id) ? "bg-accent/70" : "transition-colors hover:bg-accent/40"}>
                 <td className="px-3 py-2">
                   <input
                     type="checkbox"
@@ -138,9 +139,14 @@ export function ApplicationsTable({ rows, headers, archivedView }: { rows: Table
                     onChange={() => toggle(a.id)}
                   />
                 </td>
-                <td className="px-3 py-2">{a.company_name}</td>
-                <td className="px-3 py-2">
-                  <Link href={`/applications/${a.id}`} className="font-medium underline-offset-4 hover:underline">
+                <td className="px-3 py-2.5">
+                  <span className="flex items-center gap-3">
+                    <Monogram company={a.company_name} stage={a.stage} className="size-7 text-xs" />
+                    <span className="font-medium">{a.company_name}</span>
+                  </span>
+                </td>
+                <td className="px-3 py-2.5">
+                  <Link href={`/applications/${a.id}`} className="underline-offset-4 hover:underline">
                     {a.title}
                   </Link>
                 </td>

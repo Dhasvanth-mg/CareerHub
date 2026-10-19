@@ -115,7 +115,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
   return (
     <div className="max-w-5xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Calendar</h1>
+        <h1 className="text-3xl sm:text-4xl">Calendar</h1>
         <nav aria-label="Month" className="flex items-center gap-2 text-sm">
           <Link href={`/calendar?m=${prev}`} className="rounded-md border px-3 py-1 hover:bg-muted">
             ← Previous
@@ -142,13 +142,13 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
       <CalendarGrid year={year} month={month} items={items} />
 
       <section aria-labelledby="agenda" className="space-y-3">
-        <h2 id="agenda" className="text-lg font-medium">
+        <h2 id="agenda" className="text-xl">
           Coming up
         </h2>
         {agenda.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nothing scheduled from now through the end of this view.</p>
         ) : (
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {agenda.map((i) => (
               <li key={`${i.kind}-${i.id}`} className="flex flex-wrap items-center justify-between gap-2 p-3">
                 <div className="flex items-center gap-2">

@@ -11,7 +11,7 @@ export default function NewApplicationPage() {
         <Link href="/applications" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Applications
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">Add application</h1>
+        <h1 className="mt-2 text-3xl sm:text-4xl">Add application</h1>
         <p className="text-sm text-muted-foreground">Only company and role are required. You can fill in the rest later.</p>
       </div>
       <ApplicationForm action={createApplication} submitLabel="Create application" />
