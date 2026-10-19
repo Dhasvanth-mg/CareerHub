@@ -12,7 +12,9 @@ import { CopilotPanel } from "@/components/app/copilot-panel";
 import { NextActionPanel } from "@/components/app/next-action-panel";
 import { LocalTime } from "@/components/app/local-time";
 import { DeadlineBadge } from "@/components/app/stage-badge";
+import { Monogram } from "@/components/app/monogram";
 import { StageSelect } from "@/components/app/stage-select";
+import { StageTrack } from "@/components/app/stage-track";
 import { TaskForm } from "@/components/app/task-form";
 import { TaskList, type TaskItem } from "@/components/app/task-list";
 import {
@@ -125,7 +127,9 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
           ← Applications
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
+          <div className="flex items-start gap-4">
+            <Monogram company={row.company_name} stage={row.stage} className="mt-1 size-12 rounded-xl text-lg" />
+            <div>
             <h1 className="text-3xl sm:text-4xl">{row.title}</h1>
             <p className="text-muted-foreground">
               {row.company_name}
@@ -146,6 +150,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
                 </a>
               ) : null}
             </div>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <StageSelect id={id} stage={row.stage} />
@@ -163,6 +168,9 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
               <Trash2 aria-hidden="true" /> Delete
             </ConfirmForm>
           </div>
+        </div>
+        <div className="pt-3">
+          <StageTrack stage={row.stage} />
         </div>
       </div>
 
