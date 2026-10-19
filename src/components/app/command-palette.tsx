@@ -48,6 +48,7 @@ export function CommandPalette() {
   const [active, setActive] = useState(0);
   const [searching, setSearching] = useState(false);
   const seq = useRef(0);
+  const keyNav = useRef(false);
 
   const openSearch = useCallback(() => {
     helpRef.current?.close();
@@ -136,12 +137,24 @@ export function CommandPalette() {
   }, [query, hits]);
 
   const clamped = Math.min(active, Math.max(0, entries.length - 1));
+
+  // Keep the highlighted result in view as the arrow keys move through the list. Only keyboard moves scroll:
+  // hovering with the mouse must not make the list jump under the pointer.
+  useEffect(() => {
+    if (!keyNav.current) return;
+    keyNav.current = false;
+    // Scroll the whole row, so a group's heading comes into view along with its first result.
+    document.getElementById(`${listId}-${clamped}`)?.closest("li")?.scrollIntoView({ block: "nearest" });
+  }, [clamped, listId]);
+
   const onInputKey = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
+      keyNav.current = true;
       setActive(Math.min(entries.length - 1, clamped + 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
+      keyNav.current = true;
       setActive(Math.max(0, clamped - 1));
     } else if (e.key === "Enter" && entries[clamped]) {
       e.preventDefault();
@@ -196,7 +209,7 @@ export function CommandPalette() {
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
-        <ul id={listId} role="listbox" aria-label="Results" className="max-h-80 overflow-y-auto p-1 text-sm">
+        <ul id={listId} role="listbox" aria-label="Results" className="max-h-80 overflow-y-auto p-1 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {entries.map((e, i) => {
             const header = e.group !== lastGroup;
             lastGroup = e.group;
