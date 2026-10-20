@@ -45,9 +45,9 @@ export default async function TasksPage() {
 
   return (
     <div className="max-w-3xl space-y-8">
-      <h1 className="text-2xl font-semibold tracking-tight">Tasks</h1>
+      <h1 className="text-3xl sm:text-4xl">Tasks</h1>
 
-      <section aria-labelledby="add-task" className="space-y-3 rounded-lg border p-4">
+      <section aria-labelledby="add-task" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <h2 id="add-task" className="font-medium">
           Add a task
         </h2>
@@ -59,7 +59,7 @@ export default async function TasksPage() {
           Couldn&apos;t load tasks. Refresh to try again.
         </p>
       ) : tasks.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
           No tasks yet. Add follow-ups, deadlines and prep work above, and they will show up here and on your dashboard.
         </p>
       ) : (

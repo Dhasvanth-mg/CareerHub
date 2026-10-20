@@ -19,9 +19,9 @@ export function JobCapture() {
 
   return (
     <div className="space-y-8">
-      <form method="post" onSubmit={onSubmit} className="space-y-4 rounded-lg border p-4">
+      <form method="post" onSubmit={onSubmit} className="space-y-4 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <input type="hidden" name="mode" value={mode} />
-        <div role="group" aria-label="Import method" className="flex w-fit rounded-lg border p-0.5 text-sm">
+        <div role="group" aria-label="Import method" className="flex w-fit rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-0.5 text-sm">
           {(["text", "url"] as const).map((m) => (
             <button
               key={m}
@@ -84,7 +84,7 @@ function ReviewForm({ state }: { state: NonNullable<ExtractState> }) {
   return (
     <section aria-labelledby="review" className="space-y-5">
       <div>
-        <h2 id="review" className="text-lg font-medium">
+        <h2 id="review" className="text-xl">
           Review before saving
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -155,7 +155,7 @@ function ReviewForm({ state }: { state: NonNullable<ExtractState> }) {
         </Field>
 
         {evidence.length > 0 ? (
-          <details className="rounded-lg border p-3 text-sm sm:col-span-2">
+          <details className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm sm:col-span-2">
             <summary className="cursor-pointer font-medium">Where each requirement came from</summary>
             <ul className="mt-3 space-y-2">
               {evidence.map((r) => (
@@ -168,7 +168,7 @@ function ReviewForm({ state }: { state: NonNullable<ExtractState> }) {
           </details>
         ) : null}
 
-        <details className="rounded-lg border p-3 text-sm sm:col-span-2">
+        <details className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm sm:col-span-2">
           <summary className="cursor-pointer font-medium">Text we analyzed</summary>
           <pre className="mt-3 max-h-80 overflow-auto whitespace-pre-wrap text-xs text-muted-foreground">{state.sourcePreview}</pre>
         </details>

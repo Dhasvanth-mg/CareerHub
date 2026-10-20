@@ -177,7 +177,7 @@ export function CoverLetterDraftForm({
       </form>
 
       {state?.letter ? (
-        <div className="space-y-3 rounded-lg border p-4">
+        <div className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">AI draft · not saved yet</p>
           {state.toVerify && state.toVerify.length > 0 ? (
             <div className="text-sm">

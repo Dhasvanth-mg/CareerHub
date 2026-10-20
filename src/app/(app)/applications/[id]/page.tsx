@@ -12,7 +12,9 @@ import { CopilotPanel } from "@/components/app/copilot-panel";
 import { NextActionPanel } from "@/components/app/next-action-panel";
 import { LocalTime } from "@/components/app/local-time";
 import { DeadlineBadge } from "@/components/app/stage-badge";
+import { Monogram } from "@/components/app/monogram";
 import { StageSelect } from "@/components/app/stage-select";
+import { StageTrack } from "@/components/app/stage-track";
 import { TaskForm } from "@/components/app/task-form";
 import { TaskList, type TaskItem } from "@/components/app/task-list";
 import {
@@ -125,8 +127,10 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
           ← Applications
         </Link>
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">{row.title}</h1>
+          <div className="flex items-start gap-4">
+            <Monogram company={row.company_name} stage={row.stage} className="mt-1 size-12 rounded-xl text-lg" />
+            <div>
+            <h1 className="text-3xl sm:text-4xl">{row.title}</h1>
             <p className="text-muted-foreground">
               {row.company_name}
               {row.location ? ` · ${row.location}` : ""}
@@ -146,6 +150,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
                 </a>
               ) : null}
             </div>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <StageSelect id={id} stage={row.stage} />
@@ -164,6 +169,9 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
             </ConfirmForm>
           </div>
         </div>
+        <div className="pt-3">
+          <StageTrack stage={row.stage} />
+        </div>
       </div>
 
       <NextActionPanel applicationId={id} />
@@ -171,14 +179,14 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
       <CopilotPanel applicationId={id} />
 
       <section aria-labelledby="details" className="space-y-4">
-        <h2 id="details" className="text-lg font-medium">
+        <h2 id="details" className="text-xl">
           Details
         </h2>
         <ApplicationForm action={updateApplication.bind(null, id)} defaults={row} submitLabel="Save changes" toastOnSuccess showStage={false} />
       </section>
 
       <section aria-labelledby="materials" className="space-y-4">
-        <h2 id="materials" className="text-lg font-medium">
+        <h2 id="materials" className="text-xl">
           Materials
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -230,7 +238,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
 
       <section aria-labelledby="interviews" className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 id="interviews" className="text-lg font-medium">
+          <h2 id="interviews" className="text-xl">
             Interviews
           </h2>
           <Link href={`/applications/${id}/prep`} className="text-sm underline underline-offset-4">
@@ -248,28 +256,28 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
             No interviews yet. Add one and it shows up on your calendar, with a place for prep notes and a debrief afterwards.
           </p>
         )}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
           <h3 className="mb-3 text-sm font-medium">Add an interview</h3>
           <AddInterviewForm applicationId={id} />
         </div>
       </section>
 
       <section aria-labelledby="tasks" className="space-y-4">
-        <h2 id="tasks" className="text-lg font-medium">
+        <h2 id="tasks" className="text-xl">
           Tasks
         </h2>
         {tasks.length > 0 ? <TaskList tasks={tasks} now={nowMs()} /> : <p className="text-sm text-muted-foreground">No tasks for this application yet.</p>}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
           <TaskForm applicationId={id} />
         </div>
       </section>
 
       <section aria-labelledby="people" className="space-y-4">
-        <h2 id="people" className="text-lg font-medium">
+        <h2 id="people" className="text-xl">
           Contacts &amp; referrals
         </h2>
         {linked.length > 0 ? (
-          <ul className="divide-y rounded-lg border">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
             {linked.map((l) => {
               const c = l.contacts;
               if (!c) return null;
@@ -318,7 +326,7 @@ export default async function ApplicationDetailPage({ params }: PageProps<"/appl
       </section>
 
       <section aria-labelledby="timeline" className="space-y-4">
-        <h2 id="timeline" className="text-lg font-medium">
+        <h2 id="timeline" className="text-xl">
           Timeline
         </h2>
         {events.length === 0 ? (

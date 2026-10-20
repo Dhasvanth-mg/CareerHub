@@ -38,14 +38,14 @@ export default async function DocumentsPage() {
   return (
     <div className="max-w-4xl space-y-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Document Vault</h1>
+        <h1 className="text-3xl sm:text-4xl">Document Vault</h1>
         <p className="text-sm text-muted-foreground">
           Keep your resumes and cover letters here. Every upload becomes a version, so you can always see exactly what you
           submitted. Files are private to your account.
         </p>
       </div>
 
-      <section aria-labelledby="add-doc" className="space-y-3 rounded-lg border p-4">
+      <section aria-labelledby="add-doc" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <h2 id="add-doc" className="font-medium">
           Add a document
         </h2>
@@ -57,11 +57,11 @@ export default async function DocumentsPage() {
           Couldn&apos;t load your documents. Refresh to try again.
         </p>
       ) : docs.length === 0 ? (
-        <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+        <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
           Nothing here yet. Upload your resume to get started.
         </p>
       ) : (
-        <ul className="divide-y rounded-lg border">
+        <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
           {docs.map((d) => {
             const versions = [...d.document_versions].sort((a, b) => b.version - a.version);
             const latest = versions[0];

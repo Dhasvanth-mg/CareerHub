@@ -85,7 +85,7 @@ export default async function PlannerPage() {
   return (
     <div className="max-w-4xl space-y-10">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Career planner</h1>
+        <h1 className="text-3xl sm:text-4xl">Career planner</h1>
         <p className="text-sm text-muted-foreground">
           Decide what you&apos;re aiming for, rank your opportunities by what matters to you, and plan how to close real gaps. The ranking
           only uses your own ratings and weights, shows why each one landed where it did, and never hides an opportunity.
@@ -93,19 +93,19 @@ export default async function PlannerPage() {
       </div>
 
       <section aria-labelledby="goals" className="space-y-3">
-        <h2 id="goals" className="text-lg font-medium">
+        <h2 id="goals" className="text-xl">
           Your goals
         </h2>
         <ProfileForm profile={profile} />
       </section>
 
       <section aria-labelledby="rank" className="space-y-4">
-        <h2 id="rank" className="text-lg font-medium">
+        <h2 id="rank" className="text-xl">
           Which opportunities fit best
         </h2>
         <RankWeightsForm weights={weights} />
         {ranked.length === 0 ? (
-          <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+          <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
             No open applications to rank yet. Add some and rate them here.
           </p>
         ) : (
@@ -114,7 +114,7 @@ export default async function PlannerPage() {
               const a = appById.get(r.id) as AppRow;
               const fit = suggestedFit(latestRun.get(r.id)?.score);
               return (
-                <li key={r.id} className="space-y-3 rounded-lg border p-4">
+                <li key={r.id} className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
                       <p className="font-medium">
@@ -149,7 +149,7 @@ export default async function PlannerPage() {
       </section>
 
       <section aria-labelledby="gaps" className="space-y-3">
-        <h2 id="gaps" className="text-lg font-medium">
+        <h2 id="gaps" className="text-xl">
           Gaps worth closing
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -161,7 +161,7 @@ export default async function PlannerPage() {
             Nothing to show yet. Run a resume analysis from an application and the unmet requirements will appear here.
           </p>
         ) : (
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {gaps.map((g) => (
               <li key={g.requirement} className="flex flex-wrap items-center justify-between gap-2 p-3">
                 <span>
@@ -182,13 +182,13 @@ export default async function PlannerPage() {
       </section>
 
       <section aria-labelledby="milestones" className="space-y-3">
-        <h2 id="milestones" className="text-lg font-medium">
+        <h2 id="milestones" className="text-xl">
           Milestones
         </h2>
         {milestones.length === 0 ? (
           <p className="text-sm text-muted-foreground">No milestones yet. Add steps like a course, a project or a certification.</p>
         ) : (
-          <ul className="divide-y rounded-lg border">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
             {milestones.map((m) => {
               const done = Boolean(m.done_at);
               return (
@@ -220,7 +220,7 @@ export default async function PlannerPage() {
             })}
           </ul>
         )}
-        <div className="rounded-lg border p-4">
+        <div className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
           <AddMilestoneForm />
         </div>
       </section>

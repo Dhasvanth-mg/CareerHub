@@ -1,33 +1,30 @@
-import { Badge } from "@/components/ui/badge";
 import { STAGE_LABEL, deadlineLabel, type Stage } from "@/lib/domain";
 import { cn } from "@/lib/utils";
 
-const STAGE_STYLE: Partial<Record<Stage, string>> = {
-  offer: "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200",
-  accepted: "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200",
-  rejected: "bg-rose-100 text-rose-900 dark:bg-rose-950 dark:text-rose-200",
-  withdrawn: "bg-muted text-muted-foreground",
-};
+const chip = "inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 text-xs font-medium";
 
-export function StageBadge({ stage }: { stage: Stage }) {
+/** The stage as a small tinted pill with a dot, in the stage's own hue. */
+export function StageBadge({ stage, className }: { stage: Stage; className?: string }) {
   return (
-    <Badge variant="secondary" className={cn(STAGE_STYLE[stage])}>
+    <span data-stage={stage} className={cn(chip, "stage-soft", className)}>
+      <span aria-hidden="true" className="stage-solid size-1.5 rounded-full" />
       {STAGE_LABEL[stage]}
-    </Badge>
+    </span>
   );
 }
 
 export function DeadlineBadge({ date }: { date: string }) {
   const { text, tone } = deadlineLabel(date);
   return (
-    <Badge
-      variant="outline"
+    <span
       className={cn(
-        tone === "overdue" && "border-rose-300 text-rose-700 dark:text-rose-300",
-        tone === "soon" && "border-amber-300 text-amber-700 dark:text-amber-300",
+        chip,
+        tone === "overdue" && "bg-destructive/10 text-destructive",
+        tone === "soon" && "bg-sunrise/25 text-sunrise-foreground dark:bg-sunrise/20 dark:text-sunrise",
+        tone === "normal" && "bg-muted text-muted-foreground",
       )}
     >
       {text}
-    </Badge>
+    </span>
   );
 }

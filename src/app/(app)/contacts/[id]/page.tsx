@@ -48,7 +48,7 @@ export default async function ContactDetailPage({ params }: PageProps<"/contacts
           ← Contacts
         </Link>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight">{contact.name}</h1>
+          <h1 className="text-3xl sm:text-4xl">{contact.name}</h1>
           <ConfirmForm
             action={deleteContact.bind(null, id)}
             message={`Delete ${contact.name}? They will be unlinked from every application. This can't be undone.`}
@@ -60,7 +60,7 @@ export default async function ContactDetailPage({ params }: PageProps<"/contacts
       </div>
 
       <section aria-labelledby="linked" className="space-y-3">
-        <h2 id="linked" className="text-lg font-medium">
+        <h2 id="linked" className="text-xl">
           Linked applications
         </h2>
         {linked.length === 0 ? (
@@ -68,7 +68,7 @@ export default async function ContactDetailPage({ params }: PageProps<"/contacts
             Not linked to any application yet. Open an application and use &ldquo;Contacts &amp; referrals&rdquo; to link this person.
           </p>
         ) : (
-          <ul className="divide-y rounded-lg border">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
             {linked.map((l) =>
               l.applications ? (
                 <li key={l.application_id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
@@ -87,7 +87,7 @@ export default async function ContactDetailPage({ params }: PageProps<"/contacts
       </section>
 
       <section aria-labelledby="details" className="space-y-4">
-        <h2 id="details" className="text-lg font-medium">
+        <h2 id="details" className="text-xl">
           Details
         </h2>
         <ContactForm

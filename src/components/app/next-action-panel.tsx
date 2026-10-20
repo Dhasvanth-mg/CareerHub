@@ -34,7 +34,7 @@ export async function NextActionPanel({ applicationId }: { applicationId: string
   const proposal = (data?.[0] ?? null) as Proposal | null;
 
   return (
-    <section aria-labelledby="next-action" className="space-y-3 rounded-lg border p-4">
+    <section aria-labelledby="next-action" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
       <h2 id="next-action" className="flex items-center gap-2 text-lg font-medium">
         <Sparkles className="size-4" aria-hidden="true" /> Suggested next step
       </h2>

@@ -42,7 +42,7 @@ export default async function SharedPage({ params }: PageProps<"/share/[token]">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <LogoMark className="size-6" /> Shared from CareerHub AI
         </div>
-        <h1 className="text-2xl font-semibold tracking-tight">{owner}&apos;s job search</h1>
+        <h1 className="text-3xl sm:text-4xl">{owner}&apos;s job search</h1>
         <p className="text-sm text-muted-foreground">
           Read-only summary for {progress.label}. It updates as they work, and this link stops working on{" "}
           <LocalTime iso={progress.expires_at} dateOnly />.
@@ -60,7 +60,7 @@ export default async function SharedPage({ params }: PageProps<"/share/[token]">
             ["Interviewing", counts.get("interview") ?? 0],
             ["Offers", (counts.get("offer") ?? 0) + (counts.get("accepted") ?? 0)],
           ].map(([label, value]) => (
-            <div key={label} className="rounded-lg border p-3">
+            <div key={label} className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3">
               <dt className="text-xs text-muted-foreground">{label}</dt>
               <dd className="text-2xl font-semibold">{value}</dd>
             </div>
@@ -78,13 +78,13 @@ export default async function SharedPage({ params }: PageProps<"/share/[token]">
       </section>
 
       <section aria-labelledby="apps" className="space-y-3">
-        <h2 id="apps" className="text-lg font-medium">
+        <h2 id="apps" className="text-xl">
           Applications
         </h2>
         {progress.applications.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nothing here yet.</p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border">
+          <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
             <table className="w-full text-left text-sm">
               <thead className="bg-muted text-xs uppercase text-muted-foreground">
                 <tr>
@@ -116,10 +116,10 @@ export default async function SharedPage({ params }: PageProps<"/share/[token]">
 
       {progress.include_interviews && progress.interviews.length > 0 ? (
         <section aria-labelledby="interviews" className="space-y-3">
-          <h2 id="interviews" className="text-lg font-medium">
+          <h2 id="interviews" className="text-xl">
             Upcoming interviews
           </h2>
-          <ul className="divide-y rounded-lg border text-sm">
+          <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {progress.interviews.map((r, i) => (
               <li key={i} className="flex flex-wrap items-center justify-between gap-2 p-3">
                 <span>

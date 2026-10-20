@@ -30,7 +30,7 @@ export async function ShareSection() {
 
   return (
     <section aria-labelledby="sharing" className="space-y-3">
-      <h2 id="sharing" className="text-lg font-medium">
+      <h2 id="sharing" className="text-xl">
         Share your progress
       </h2>
       <p className="text-sm text-muted-foreground">
@@ -39,7 +39,7 @@ export async function ShareSection() {
       </p>
       <ShareLinkForm />
       {links.length > 0 ? (
-        <ul className="divide-y rounded-lg border text-sm">
+        <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
           {links.map((l) => {
             const expired = Date.parse(l.expires_at) <= now;
             const active = !l.revoked_at && !expired;

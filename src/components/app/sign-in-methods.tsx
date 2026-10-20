@@ -21,7 +21,7 @@ export function SignInMethods({ identities, notice }: { identities: UserIdentity
 
   return (
     <section aria-labelledby="signin" className="space-y-3">
-      <h2 id="signin" className="text-lg font-medium">
+      <h2 id="signin" className="text-xl">
         Sign-in methods
       </h2>
       <p className="text-sm text-muted-foreground">
@@ -33,7 +33,7 @@ export function SignInMethods({ identities, notice }: { identities: UserIdentity
           {message.text}
         </p>
       ) : null}
-      <ul className="divide-y rounded-lg border text-sm">
+      <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
         {identities.map((i) => {
           const email = typeof i.identity_data?.email === "string" ? i.identity_data.email : null;
           return (

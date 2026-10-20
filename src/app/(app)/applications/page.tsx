@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NativeSelect } from "@/components/ui/native-select";
+import { EmptyState } from "@/components/app/empty-state";
 import { Board, type BoardCard } from "@/components/app/board";
 import { ApplicationsTable } from "@/components/app/applications-table";
 import { STAGES, STAGE_LABEL, type Stage } from "@/lib/domain";
@@ -61,8 +62,13 @@ export default async function ApplicationsPage({ searchParams }: PageProps<"/app
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">{archived ? "Archived applications" : "Applications"}</h1>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="space-y-1.5">
+          <h1 className="text-3xl sm:text-4xl">{archived ? "Archived applications" : "Applications"}</h1>
+          <p className="text-muted-foreground">
+            {apps.length === 0 ? "Nothing here yet." : `${apps.length} ${apps.length === 1 ? "application" : "applications"}${filtered ? " match" : " in your search"}.`}
+          </p>
+        </div>
         <div className="flex flex-wrap items-center gap-2">
           <Button nativeButton={false} variant="outline" render={<Link href="/applications/import" />}>
             Import CSV
@@ -81,7 +87,10 @@ export default async function ApplicationsPage({ searchParams }: PageProps<"/app
           <label htmlFor="q" className="sr-only">
             Search company or role
           </label>
-          <Input id="q" name="q" defaultValue={term} placeholder="Search company or role" />
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+            <Input id="q" name="q" defaultValue={term} placeholder="Search company or role" className="h-9 pl-9" />
+          </div>
         </div>
         <div className="w-40">
           <label htmlFor="stage" className="sr-only">
@@ -102,13 +111,13 @@ export default async function ApplicationsPage({ searchParams }: PageProps<"/app
         <Button type="submit" variant="secondary">
           Filter
         </Button>
-        <div className="ml-auto flex rounded-lg border p-0.5 text-sm" role="group" aria-label="View">
+        <div className="ml-auto flex rounded-full bg-muted p-1 text-sm" role="group" aria-label="View">
           {(["board", "table"] as const).map((v) => (
             <Link
               key={v}
               href={qs({ view: v })}
               aria-current={view === v ? "true" : undefined}
-              className={cn("rounded-md px-3 py-1 capitalize", view === v ? "bg-muted font-medium" : "text-muted-foreground")}
+              className={cn("rounded-full px-4 py-1 capitalize transition-colors", view === v ? "bg-card font-medium shadow-xs" : "text-muted-foreground hover:text-foreground")}
             >
               {v}
             </Link>
@@ -121,18 +130,20 @@ export default async function ApplicationsPage({ searchParams }: PageProps<"/app
           Couldn&apos;t load applications. Refresh to try again.
         </p>
       ) : apps.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
-          <p className="font-medium">{filtered ? "No applications match these filters." : "No applications yet."}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {filtered ? (
-              <Link href="/applications" className="underline underline-offset-4">
-                Clear filters
-              </Link>
-            ) : (
-              "Add the first role you're interested in. A company and a title are enough to start."
-            )}
-          </p>
-        </div>
+        <EmptyState
+          title={filtered ? "No applications match these filters" : "No applications yet"}
+          description={filtered ? "Try a different search or clear the filters to see everything." : "Add the first role you're interested in. A company and a title are enough to start."}
+        >
+          {filtered ? (
+            <Button nativeButton={false} variant="outline" render={<Link href="/applications" />}>
+              Clear filters
+            </Button>
+          ) : (
+            <Button nativeButton={false} render={<Link href="/applications/new" />}>
+              Add an application
+            </Button>
+          )}
+        </EmptyState>
       ) : view === "board" ? (
         <Board apps={apps as BoardCard[]} />
       ) : (

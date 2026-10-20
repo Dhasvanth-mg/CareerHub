@@ -57,7 +57,7 @@ export function ExportPicker({ items }: { items: ExportItem[] }) {
         if (group.length === 0) return null;
         const allOn = group.every((i) => selected.has(i.key));
         return (
-          <fieldset key={kind} className="rounded-lg border">
+          <fieldset key={kind} className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
             <legend className="sr-only">{KIND_LABEL[kind]}</legend>
             <div className="flex items-center justify-between gap-2 border-b bg-muted/40 px-3 py-2">
               <h3 className="text-sm font-medium">
@@ -204,7 +204,7 @@ export function ImportPicker({ applications }: { applications: { id: string; lab
       </div>
 
       {warnings.length > 0 ? (
-        <ul className="space-y-1 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100" role="status">
+        <ul className="space-y-1 rounded-2xl border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-100" role="status">
           {warnings.map((w) => (
             <li key={w}>{w}</li>
           ))}
@@ -229,7 +229,7 @@ export function ImportPicker({ applications }: { applications: { id: string; lab
             </span>
           </div>
 
-          <ul className="max-h-96 divide-y overflow-y-auto rounded-lg border text-sm">
+          <ul className="max-h-96 divide-y overflow-y-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] text-sm">
             {rows.map((r) => {
               return (
                 <li key={r.key}>

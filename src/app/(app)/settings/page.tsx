@@ -29,11 +29,11 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
   const identities = identityData?.identities ?? [];
 
   return (
-    <div className="max-w-3xl space-y-10">
-      <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
+    <div className="max-w-5xl [&>h1]:pb-8 [&>section:not([aria-labelledby=danger])]:border-t [&>section:not([aria-labelledby=danger])]:py-8 md:[&>section:not([aria-labelledby=danger])]:grid md:[&>section:not([aria-labelledby=danger])]:grid-cols-[13rem_minmax(0,1fr)] md:[&>section:not([aria-labelledby=danger])]:gap-x-10 md:[&>section:not([aria-labelledby=danger])>h2]:col-start-1 md:[&>section:not([aria-labelledby=danger])>h2]:row-span-6 md:[&>section:not([aria-labelledby=danger])>h2]:self-start md:[&>section:not([aria-labelledby=danger])>*:not(h2)]:col-start-2 [&>section[aria-labelledby=danger]]:mt-10">
+      <h1 className="text-3xl sm:text-4xl">Settings</h1>
 
       <section aria-labelledby="profile" className="space-y-3">
-        <h2 id="profile" className="text-lg font-medium">
+        <h2 id="profile" className="text-xl">
           Profile
         </h2>
         <p className="text-sm text-muted-foreground">Signed in as {auth.user.email}.</p>
@@ -43,7 +43,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
       <SignInMethods identities={identities} notice={link} />
 
       <section aria-labelledby="appearance" className="space-y-3">
-        <h2 id="appearance" className="text-lg font-medium">
+        <h2 id="appearance" className="text-xl">
           Appearance
         </h2>
         <p className="text-sm text-muted-foreground">System follows your device setting. The choice is remembered on this browser.</p>
@@ -51,7 +51,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
       </section>
 
       <section aria-labelledby="ai" className="space-y-3">
-        <h2 id="ai" className="text-lg font-medium">
+        <h2 id="ai" className="text-xl">
           AI features
         </h2>
         <AiNoticeText />
@@ -81,7 +81,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
       <ShareSection />
 
       <section aria-labelledby="data" className="space-y-3">
-        <h2 id="data" className="text-lg font-medium">
+        <h2 id="data" className="text-xl">
           Your data
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -98,7 +98,7 @@ export default async function SettingsPage({ searchParams }: PageProps<"/setting
         </div>
       </section>
 
-      <section aria-labelledby="danger" className="space-y-3 rounded-lg border border-destructive/40 p-4">
+      <section aria-labelledby="danger" className="space-y-3 rounded-2xl border border-destructive/40 p-4">
         <h2 id="danger" className="text-lg font-medium text-destructive">
           Delete account
         </h2>

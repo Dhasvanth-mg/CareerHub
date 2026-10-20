@@ -32,7 +32,7 @@ export default async function ActionCenterPage({ searchParams }: PageProps<"/act
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Action Center</h1>
+        <h1 className="text-3xl sm:text-4xl">Action Center</h1>
         <p className="text-sm text-muted-foreground">
           What deserves your attention across every application, and exactly why. These come from your own dates and records. Nothing is
           done for you: add a suggestion as a task, snooze it, or dismiss it.
@@ -59,7 +59,7 @@ export default async function ActionCenterPage({ searchParams }: PageProps<"/act
       ) : null}
 
       {shown.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
+        <div className="rounded-2xl border border-dashed p-10 text-center">
           <p className="font-medium">{visible.length === 0 ? "You're all caught up" : "Nothing in this view"}</p>
           <p className="mt-1 text-sm text-muted-foreground">
             {visible.length === 0
@@ -76,7 +76,7 @@ export default async function ActionCenterPage({ searchParams }: PageProps<"/act
       )}
 
       {hidden.length > 0 ? (
-        <details className="rounded-lg border p-4 text-sm">
+        <details className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4 text-sm">
           <summary className="cursor-pointer font-medium">Snoozed or dismissed ({hidden.length})</summary>
           <ul className="mt-3 space-y-2">
             {hidden.map((item) => (
@@ -109,7 +109,7 @@ export default async function ActionCenterPage({ searchParams }: PageProps<"/act
 
 function ActionCard({ item }: { item: ActionItem }) {
   return (
-    <li className="space-y-2 rounded-lg border p-4">
+    <li className="space-y-2 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <Link href={item.href} className="font-medium underline-offset-4 hover:underline">
           {item.title}

@@ -40,7 +40,7 @@ export default async function PracticePage({ params, searchParams }: PageProps<"
         <Link href={back} className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Interview prep for {app.title} at {app.company_name}
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">Timed practice</h1>
+        <h1 className="text-3xl sm:text-4xl">Timed practice</h1>
         <p className="text-sm text-muted-foreground">
           Answer your practice questions against a clock, like the real thing. Nothing is sent to the AI during the session.
         </p>

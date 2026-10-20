@@ -23,7 +23,7 @@ export default async function ContactsPage({ searchParams }: PageProps<"/contact
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Contacts &amp; referrals</h1>
+        <h1 className="text-3xl sm:text-4xl">Contacts &amp; referrals</h1>
         <Button nativeButton={false} render={<Link href="/contacts/new" />}>
           <Plus aria-hidden="true" /> Add contact
         </Button>
@@ -44,7 +44,7 @@ export default async function ContactsPage({ searchParams }: PageProps<"/contact
           Couldn&apos;t load contacts. Refresh to try again.
         </p>
       ) : contacts.length === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
+        <div className="rounded-2xl border border-dashed p-10 text-center">
           <p className="font-medium">{term ? "No contacts match that search." : "No contacts yet."}</p>
           <p className="mt-1 text-sm text-muted-foreground">
             {term ? (
@@ -57,7 +57,7 @@ export default async function ContactsPage({ searchParams }: PageProps<"/contact
           </p>
         </div>
       ) : (
-        <ul className="divide-y rounded-lg border">
+        <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
           {contacts.map((c) => (
             <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 p-3">
               <div className="min-w-0">

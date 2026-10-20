@@ -79,9 +79,9 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
   return (
     <div className="max-w-5xl space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
+        <h1 className="text-3xl sm:text-4xl">Analytics</h1>
         <div className="flex flex-wrap items-center gap-2">
-          <nav aria-label="Time period" className="flex rounded-lg border p-0.5 text-sm">
+          <nav aria-label="Time period" className="flex rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-0.5 text-sm">
             {PERIODS.map(([k, label]) => (
               <Link
                 key={k}
@@ -104,7 +104,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
           Couldn&apos;t load your data. Refresh to try again.
         </p>
       ) : result.total === 0 ? (
-        <div className="rounded-lg border border-dashed p-10 text-center">
+        <div className="rounded-2xl border border-dashed p-10 text-center">
           <p className="font-medium">Nothing to analyze yet</p>
           <p className="mt-1 text-sm text-muted-foreground">
             Add applications and move them through stages, and this page will show how your search is going.
@@ -134,7 +134,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
           </section>
 
           <section aria-labelledby="funnel" className="space-y-3">
-            <h2 id="funnel" className="text-lg font-medium">
+            <h2 id="funnel" className="text-xl">
               Funnel
             </h2>
             <p className="text-sm text-muted-foreground">
@@ -165,7 +165,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
           </section>
 
           <section aria-labelledby="outcomes" className="space-y-3">
-            <h2 id="outcomes" className="text-lg font-medium">
+            <h2 id="outcomes" className="text-xl">
               Outcomes
             </h2>
             <p className="text-sm">
@@ -176,7 +176,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
 
           <div className="grid gap-6 lg:grid-cols-2">
             <section aria-labelledby="sources" className="space-y-3">
-              <h2 id="sources" className="text-lg font-medium">
+              <h2 id="sources" className="text-xl">
                 By source
               </h2>
               <BreakdownTable
@@ -186,7 +186,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
               />
             </section>
             <section aria-labelledby="resumes" className="space-y-3">
-              <h2 id="resumes" className="text-lg font-medium">
+              <h2 id="resumes" className="text-xl">
                 By submitted resume
               </h2>
               <BreakdownTable
@@ -202,7 +202,7 @@ export default async function AnalyticsPage({ searchParams }: PageProps<"/analyt
             </section>
           </div>
 
-          <details className="rounded-lg border p-4 text-sm">
+          <details className="rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4 text-sm">
             <summary className="cursor-pointer font-medium">How these numbers are calculated</summary>
             <ul className="mt-3 list-disc space-y-1 pl-5 text-muted-foreground">
               <li>A stage counts as &ldquo;reached&rdquo; if the application is there now, or you moved it there or past it.</li>
@@ -232,7 +232,7 @@ function BreakdownTable({
 }) {
   if (rows.length === 0) return <p className="text-sm text-muted-foreground">{empty}</p>;
   return (
-    <div className="overflow-x-auto rounded-lg border">
+    <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
       <table className="w-full text-left text-sm">
         <caption className="sr-only">{caption}</caption>
         <thead className="border-b bg-muted/40">

@@ -12,7 +12,7 @@ export default async function CheckEmailPage({ searchParams }: PageProps<"/check
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight">Check your email</h1>
+        <h1 className="text-3xl sm:text-4xl">Check your email</h1>
         <p className="text-sm text-muted-foreground">
           {unconfirmed ? "You need to confirm your email before logging in. " : ""}
           {email ? (

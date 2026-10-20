@@ -49,11 +49,11 @@ export function CalendarGrid({ year, month, items }: { year: number; month: numb
   }, [isClient, items, year, month]);
 
   if (!isClient) {
-    return <div className="h-64 animate-pulse rounded-lg border bg-muted/30" aria-hidden="true" />;
+    return <div className="h-64 animate-pulse rounded-2xl border bg-muted/30" aria-hidden="true" />;
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border">
+    <div className="overflow-x-auto rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
       <table className="w-full min-w-[40rem] table-fixed border-collapse text-xs">
         <caption className="sr-only">Month calendar. The agenda below lists the same items in order.</caption>
         <thead className="bg-muted/40">

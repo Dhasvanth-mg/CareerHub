@@ -129,7 +129,7 @@ export function PrepItemCard({ item }: { item: PrepItem }) {
   const stale = Boolean(review && review.answered_text !== item.answer_draft);
 
   return (
-    <li className="space-y-3 rounded-lg border p-4">
+    <li className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <p className="font-medium">{item.question}</p>
         <div className="flex items-center gap-2">

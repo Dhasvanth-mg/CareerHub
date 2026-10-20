@@ -111,7 +111,7 @@ export function PracticeSession({ questions, backHref }: { questions: PracticeQu
 
   if (questions.length === 0) {
     return (
-      <p className="rounded-lg border border-dashed p-8 text-center text-sm text-muted-foreground">
+      <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
         There are no practice questions here yet.{" "}
         <Link href={backHref} className="underline underline-offset-4">
           Generate some first
@@ -123,7 +123,7 @@ export function PracticeSession({ questions, backHref }: { questions: PracticeQu
 
   if (phase === "setup") {
     return (
-      <section aria-labelledby="setup" className="space-y-4 rounded-lg border p-4">
+      <section aria-labelledby="setup" className="space-y-4 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <h2 id="setup" className="font-medium">
           Set up your session
         </h2>
@@ -173,7 +173,7 @@ export function PracticeSession({ questions, backHref }: { questions: PracticeQu
     const answered = results.filter((r) => r.answer.trim()).length;
     return (
       <section aria-labelledby="done" className="space-y-4">
-        <h2 id="done" className="text-lg font-medium">
+        <h2 id="done" className="text-xl">
           Session complete
         </h2>
         <p className="text-sm text-muted-foreground">
@@ -186,7 +186,7 @@ export function PracticeSession({ questions, backHref }: { questions: PracticeQu
         ) : null}
         <ol className="space-y-3">
           {results.map((r) => (
-            <li key={r.id} className="space-y-1 rounded-lg border p-3 text-sm">
+            <li key={r.id} className="space-y-1 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-3 text-sm">
               <p className="font-medium">{r.question}</p>
               <p className="text-xs text-muted-foreground">
                 {r.answer.trim() ? `${words(r.answer)} words` : "No answer"} · {fmt(r.usedSeconds)} of {fmt(seconds)}
@@ -223,7 +223,7 @@ export function PracticeSession({ questions, backHref }: { questions: PracticeQu
           {fmt(remaining)}
         </p>
       </div>
-      <h2 id="q" className="text-lg font-medium">
+      <h2 id="q" className="text-xl">
         {current?.question}
       </h2>
       <Textarea

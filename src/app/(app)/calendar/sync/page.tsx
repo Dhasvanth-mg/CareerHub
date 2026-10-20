@@ -27,7 +27,7 @@ export default async function CalendarSyncPage() {
         <Link href="/calendar" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Calendar
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight">Calendar sync</h1>
+        <h1 className="text-3xl sm:text-4xl">Calendar sync</h1>
         <p className="text-sm text-muted-foreground">
           Move events in and out with a standard calendar file (.ics). It works with Google Calendar, Apple Calendar and Outlook. Nothing
           is shared automatically: you choose what goes in or out.
@@ -36,7 +36,7 @@ export default async function CalendarSyncPage() {
 
       <section aria-labelledby="export" className="space-y-4">
         <div className="space-y-1">
-          <h2 id="export" className="text-lg font-medium">
+          <h2 id="export" className="text-xl">
             Export
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -49,7 +49,7 @@ export default async function CalendarSyncPage() {
 
       <section aria-labelledby="import" className="space-y-4">
         <div className="space-y-1">
-          <h2 id="import" className="text-lg font-medium">
+          <h2 id="import" className="text-xl">
             Import
           </h2>
           <p className="text-sm text-muted-foreground">

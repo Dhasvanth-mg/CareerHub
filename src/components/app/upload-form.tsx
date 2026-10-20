@@ -90,7 +90,7 @@ export function UploadForm({ userId, documentId, defaultKind = "resume", default
 
   return (
     <form method="post" onSubmit={onSubmit} className="space-y-4">
-      <div role="group" aria-label="Add by" className="flex w-fit rounded-lg border p-0.5 text-sm">
+      <div role="group" aria-label="Add by" className="flex w-fit rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-0.5 text-sm">
         {(["file", "text"] as const).map((m) => (
           <button
             key={m}

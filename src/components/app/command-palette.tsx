@@ -2,22 +2,30 @@
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search } from "lucide-react";
+import { BriefcaseBusiness, CheckSquare, FileText, Layers, Plus, Search, Users, type LucideIcon } from "lucide-react";
 import { searchEverything, type SearchHit } from "@/app/(app)/search/actions";
 import { Button } from "@/components/ui/button";
 import { NAV_ITEMS } from "./nav-items";
 
-type Entry = { id: string; group: string; title: string; sub?: string; href: string };
+type Entry = { id: string; group: string; title: string; sub?: string; href: string; icon?: LucideIcon };
 
-const ACTIONS: Entry[] = [
+const GROUP_ICON: Record<string, LucideIcon> = {
+  Applications: BriefcaseBusiness,
+  Contacts: Users,
+  Tasks: CheckSquare,
+  Documents: FileText,
+  Evidence: Layers,
+};
+
+const ACTIONS: Entry[] = ([
   { id: "a-app", group: "Quick actions", title: "Add application", href: "/applications/new" },
   { id: "a-import-job", group: "Quick actions", title: "Import a job posting", href: "/jobs" },
   { id: "a-task", group: "Quick actions", title: "Add task", href: "/tasks" },
   { id: "a-contact", group: "Quick actions", title: "Add contact", href: "/contacts/new" },
   { id: "a-csv", group: "Quick actions", title: "Import applications from CSV", href: "/applications/import" },
   { id: "a-cal", group: "Quick actions", title: "Calendar import / export", href: "/calendar/sync" },
-];
-const PAGES: Entry[] = NAV_ITEMS.map((n) => ({ id: `p-${n.href}`, group: "Go to", title: n.label, href: n.href }));
+] as Entry[]).map((e) => ({ ...e, icon: Plus }));
+const PAGES: Entry[] = NAV_ITEMS.map((n) => ({ id: `p-${n.href}`, group: "Go to", title: n.label, href: n.href, icon: n.icon }));
 
 /** "g" then a letter jumps to a page; "n" starts a new application. */
 const GO: Record<string, { href: string; label: string }> = {
@@ -37,7 +45,7 @@ const typing = (el: EventTarget | null) => {
   return e.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(e.tagName);
 };
 
-export function CommandPalette() {
+export function CommandPalette({ variant = "rail" }: { variant?: "rail" | "icon" }) {
   const router = useRouter();
   const searchRef = useRef<HTMLDialogElement>(null);
   const helpRef = useRef<HTMLDialogElement>(null);
@@ -133,7 +141,7 @@ export function CommandPalette() {
     const q = query.trim().toLowerCase();
     if (q.length < 2) return [...ACTIONS, ...PAGES];
     const local = [...ACTIONS, ...PAGES].filter((e) => e.title.toLowerCase().includes(q));
-    return [...hits.map((h) => ({ ...h, id: `${h.group}-${h.id}` })), ...local];
+    return [...hits.map((h) => ({ ...h, id: `${h.group}-${h.id}`, icon: GROUP_ICON[h.group] })), ...local];
   }, [query, hits]);
 
   const clamped = Math.min(active, Math.max(0, entries.length - 1));
@@ -168,18 +176,29 @@ export function CommandPalette() {
     if (e.target === e.currentTarget) e.currentTarget.close();
   };
   const dialogClass =
-    "m-auto w-[min(36rem,calc(100vw-2rem))] rounded-xl border bg-popover p-0 text-popover-foreground shadow-xl backdrop:bg-black/40";
+    "m-auto w-[min(38rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border-0 bg-popover p-0 text-popover-foreground shadow-float ring-1 ring-foreground/10 backdrop:bg-sidebar/55 backdrop:backdrop-blur-sm";
 
   let lastGroup = "";
   return (
     <>
-      <Button type="button" variant="outline" size="sm" onClick={openSearch} aria-label="Search" className="gap-2 text-muted-foreground">
-        <Search className="size-4" aria-hidden="true" />
-        <span className="hidden sm:inline">Search</span>
-        <kbd className="hidden rounded border px-1 text-xs sm:inline" aria-hidden="true">
-          /
-        </kbd>
-      </Button>
+      {variant === "rail" ? (
+        <button
+          type="button"
+          onClick={openSearch}
+          aria-label="Search"
+          className="flex w-full items-center gap-2 rounded-2xl border border-sidebar-border bg-sidebar-accent/50 px-3 py-2 text-sm text-sidebar-foreground/70 outline-none transition-colors hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+        >
+          <Search className="size-4" aria-hidden="true" />
+          <span className="flex-1 text-left">Search or jump to</span>
+          <kbd className="rounded border border-sidebar-border px-1.5 text-xs text-sidebar-foreground/60" aria-hidden="true">
+            /
+          </kbd>
+        </button>
+      ) : (
+        <Button type="button" variant="ghost" size="icon" onClick={openSearch} aria-label="Search">
+          <Search className="size-[18px]" aria-hidden="true" />
+        </Button>
+      )}
 
       <dialog
         ref={searchRef}
@@ -208,7 +227,7 @@ export function CommandPalette() {
             aria-label="Search applications, contacts, tasks and documents, or jump to a page"
             placeholder="Search your records or jump to a page…"
             autoComplete="off"
-            className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className="w-full bg-transparent text-base outline-none placeholder:text-muted-foreground"
           />
         </div>
         <ul id={listId} role="listbox" aria-label="Results" className="max-h-80 overflow-y-auto p-1 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -224,9 +243,14 @@ export function CommandPalette() {
                   aria-selected={i === clamped}
                   onMouseMove={() => setActive(i)}
                   onClick={() => go(e.href)}
-                  className={`flex cursor-pointer items-center justify-between gap-3 rounded-md px-2 py-1.5 ${i === clamped ? "bg-accent text-accent-foreground" : ""}`}
+                  className={`flex cursor-pointer items-center justify-between gap-3 rounded-lg px-2.5 py-2 ${i === clamped ? "bg-accent text-accent-foreground" : ""}`}
                 >
-                  <span className="min-w-0 truncate">{e.title}</span>
+                  <span className="flex min-w-0 items-center gap-2.5">
+                    {e.icon ? (
+                      <e.icon className={`size-4 shrink-0 ${i === clamped ? "text-primary" : "text-muted-foreground"}`} aria-hidden="true" />
+                    ) : null}
+                    <span className="min-w-0 truncate">{e.title}</span>
+                  </span>
                   {e.sub ? <span className="shrink-0 text-xs capitalize text-muted-foreground">{e.sub}</span> : null}
                 </div>
               </li>

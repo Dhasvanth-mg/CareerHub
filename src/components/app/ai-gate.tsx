@@ -26,7 +26,7 @@ export async function AiGate({ children, feature }: { children: React.ReactNode;
   const supabase = await createClient();
   if (await hasAiConsent(supabase)) return <>{children}</>;
   return (
-    <section aria-labelledby="ai-notice" className="space-y-3 rounded-lg border p-4">
+    <section aria-labelledby="ai-notice" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
       <h2 id="ai-notice" className="font-medium">
         Before you use {feature}
       </h2>

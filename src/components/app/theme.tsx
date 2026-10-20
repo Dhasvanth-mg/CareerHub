@@ -30,7 +30,7 @@ export function ThemeChooser() {
   const { theme, setTheme } = useTheme();
   const mounted = useMounted();
   return (
-    <div role="radiogroup" aria-label="Theme" className="flex w-fit rounded-lg border p-0.5 text-sm">
+    <div role="radiogroup" aria-label="Theme" className="flex w-fit rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-0.5 text-sm">
       {CHOICES.map((c) => {
         const on = mounted && (theme ?? "system") === c.value;
         return (
@@ -51,7 +51,7 @@ export function ThemeChooser() {
 }
 
 /** Header button: flips between light and dark from whatever is showing now. */
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
   const dark = mounted && resolvedTheme === "dark";
@@ -60,6 +60,7 @@ export function ThemeToggle() {
       type="button"
       variant="ghost"
       size="icon"
+      className={className}
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >

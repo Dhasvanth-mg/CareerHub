@@ -58,7 +58,7 @@ export default async function DocumentPage({ params, searchParams }: PageProps<"
         </Link>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">{doc.title}</h1>
+            <h1 className="text-3xl sm:text-4xl">{doc.title}</h1>
             <p className="text-sm text-muted-foreground">{KIND_LABEL[doc.kind] ?? doc.kind}</p>
           </div>
           <div className="flex gap-2">
@@ -79,10 +79,10 @@ export default async function DocumentPage({ params, searchParams }: PageProps<"
       </div>
 
       <section aria-labelledby="versions" className="space-y-3">
-        <h2 id="versions" className="text-lg font-medium">
+        <h2 id="versions" className="text-xl">
           Versions
         </h2>
-        <ul className="divide-y rounded-lg border">
+        <ul className="divide-y rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06]">
           {list.map((v) => (
             <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 p-3 text-sm">
               <div className="min-w-0">
@@ -126,7 +126,7 @@ export default async function DocumentPage({ params, searchParams }: PageProps<"
 
       {selected ? (
         <section aria-labelledby="text" className="space-y-3">
-          <h2 id="text" className="text-lg font-medium">
+          <h2 id="text" className="text-xl">
             Text of version {selected.version}
           </h2>
           {selected.extraction_state !== "ok" ? (
@@ -141,7 +141,7 @@ export default async function DocumentPage({ params, searchParams }: PageProps<"
 
       {selected?.extracted_text?.trim() ? (
         <section aria-labelledby="export" className="space-y-3">
-          <h2 id="export" className="text-lg font-medium">
+          <h2 id="export" className="text-xl">
             Export version {selected.version}
           </h2>
           <p className="text-sm text-muted-foreground">
@@ -158,7 +158,7 @@ export default async function DocumentPage({ params, searchParams }: PageProps<"
         </section>
       ) : null}
 
-      <section aria-labelledby="newver" className="space-y-3 rounded-lg border p-4">
+      <section aria-labelledby="newver" className="space-y-3 rounded-2xl bg-card shadow-xs ring-1 ring-foreground/[0.06] p-4">
         <h2 id="newver" className="font-medium">
           Add a new version
         </h2>
